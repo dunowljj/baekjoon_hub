@@ -1,6 +1,5 @@
 import java.io.*;
-import java.util.Arrays;
-import java.util.StringTokenizer;
+import java.util.*;
 
 public class Main {
     static int[] inputNums;
@@ -8,6 +7,7 @@ public class Main {
     static int M;
     static int N;
     static StringBuilder sb = new StringBuilder();
+    static Set<Integer> set = new LinkedHashSet<>();
 
     public static void main(String[] args) throws IOException{
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -21,9 +21,14 @@ public class Main {
         arr = new int[M];
 
         st = new StringTokenizer(br.readLine());
-        for(int i = 0; i<N; i++)
-            inputNums[i] = Integer.parseInt(st.nextToken());
+        for(int i = 0; i<N; i++) {
+            set.add(Integer.parseInt(st.nextToken()));
+        }
 
+        Iterator<Integer> iter = set.iterator();
+        for (int i = 0; i < set.size(); i++) {
+            inputNums[i] = iter.next();
+        }
         Arrays.sort(inputNums);
 
         dfs(0);
@@ -58,6 +63,6 @@ public class Main {
 }
 /*
 같은 수가 여러개 주어질 수 있음 + 같은 수 여러번 고를 수 있음
-방법2 : 현재에서 방문여부만 제거
+방법1 : 방문여부 제거하고 set 으로 입력받은 숫자를 거르기
 
  */
