@@ -29,13 +29,12 @@ public class Main {
         Arrays.sort(inputNums);
 
         dfs(0);
-        String answer = "";
         for (String perm : set) {
-            answer += perm;
+            sb.append(perm);
         }
 
 
-        bw.write(answer.trim());
+        bw.write(sb.toString().trim());
         bw.flush();
         bw.close();
     }
