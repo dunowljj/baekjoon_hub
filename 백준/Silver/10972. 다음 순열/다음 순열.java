@@ -1,6 +1,9 @@
 import java.io.*;
 import java.util.StringTokenizer;
-
+/*
+!!수정 요망
+애매한 네이밍과 리팩터링때문에 오히려 보기 더 힘든 코드가 된거같기도 하다.
+*/
 public class Main {
     static int[] perm; //입력받는 배열, 타겟의 다음 순열 구해야함
     static int N;
