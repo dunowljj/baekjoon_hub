@@ -1,9 +1,6 @@
 import java.io.*;
 import java.util.StringTokenizer;
-/*
-!!수정 요망
-애매한 네이밍과 리팩터링때문에 오히려 보기 더 힘든 코드가 된거같기도 하다.
-*/
+
 public class Main {
     static int[] perm; //입력받는 배열, 타겟의 다음 순열 구해야함
     static int N;
@@ -19,11 +16,34 @@ public class Main {
         for (int i = 0; i < N; i++) {
             perm[i] = Integer.parseInt(st.nextToken());
         }
-
-        int t1 = getT1();
-
+        
+        //증가하는 부분의 시작점인 t1 구하기
+        int t1 = perm.length - 1;
+        while (t1 > 0 && perm[t1 - 1] > perm[t1]) {
+            t1--;
+        }
+        
         if (hasNextPerm(t1)) {
-            makeNextPerm(t1);
+            t1--; //시작점
+            
+            //시작점과 바꿀 위치인 t2 구하기
+            //맨뒤가 제일 작으므로, 작은 수부터 perm[t1]보다 큰지만 확인
+            int t2 = perm.length - 1;
+            while (perm[t1] > perm[t2]) {
+                t2--;
+            }
+
+            // 위치 바꾸기
+            swap(t1, t2);
+
+            //t1번째 이후 값들 오름차순 정렬
+            //t1다음 값과 맨뒤 값부터 대칭해서 서로 바꿔주면 된다.
+            t2 = perm.length - 1;
+            while (t1 + 1 < t2) {
+                swap(t1 + 1,t2);
+                t1++;
+                t2--;
+            }
 
             for (int p : perm) {
                 sb.append(p).append(" ");
@@ -38,47 +58,8 @@ public class Main {
         bw.close();
     }
 
-    private static void makeNextPerm(int t1) {
-        t1--; //시작점
-        int t2 = getT2(t1);
-
-        swap(t1, t2);
-        sortAfter(t1);
-    }
-
-    private static int getT1() {
-        //증가하는 부분의 시작점 t1 구하기
-        int t1 = perm.length - 1;
-        while (t1 > 0 && perm[t1 - 1] > perm[t1]) {
-            t1--;
-        }
-        return t1;
-    }
-
     private static boolean hasNextPerm(int t1) {
         return t1 > 0;
-    }
-
-    private static int getT2(int t1) {
-        //시작점과 바꿀 위치 구하기
-        //맨뒤가 제일 작으므로, 작은 수부터 perm[t1]보다 큰지만 확인
-        int t2 = perm.length - 1;
-        while (perm[t1] > perm[t2]) {
-            t2--;
-        }
-        return t2;
-    }
-
-    private static void sortAfter(int t1) {
-        int t2;
-        //t1번째 이후 값들 오름차순 정렬
-        //t1다음 값과 맨뒤 값부터 대칭해서 서로 바꿔주면 된다.
-        t2 = perm.length - 1;
-        while (t1 + 1 < t2) {
-            swap(t1 + 1,t2);
-            t1++;
-            t2--;
-        }
     }
 
     private static void swap(int t1, int t2) {
