@@ -34,7 +34,19 @@ public class Main {
             System.exit(0);
         }
 
-        for (int i = -10; i <= 10; i++) {
+        //성능
+        int start = 0; int end = 0;
+        if (signMatrix[depth][depth] == '-') {
+            start = -10; end = -1;
+        }
+        else if (signMatrix[depth][depth] == '+') {
+            start = 1; end = 10;
+        }
+        else if (signMatrix[depth][depth] == '0'){
+            start = 0; end = 0;
+        }
+
+        for (int i = start; i <= end; i++) {
             seq[depth] = i;
             if (check(depth)) {
                 dfs(depth + 1);
@@ -57,7 +69,4 @@ public class Main {
 sign matrix의 Sij는 sequence[i]~[j]의 합이 음수인지 양수인지 0인지 판별한 결과
 시퀀스 길이는 1~10, 각 요소는 -10 ~ 10의 정수
 주어진 시퀀스와 일치하는 sign matrix와 일치하는 시퀀스가 1개 이상이면, 그 중 아무거나 출력
-
--10 ~10까지에서 10개의 순열 뽑기?
-10개로 10개 뽑기는 10!이면 된다.
  */
