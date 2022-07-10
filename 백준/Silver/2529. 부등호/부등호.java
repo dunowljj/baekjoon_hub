@@ -72,19 +72,16 @@ public class Main {
                 visited[i] = false;
                 continue;
             }
-            if (!visited[i] && isDescending[depth] && arr[depth - 1] > i) {
-                visited[i] = true;
-                arr[depth] = i;
-                dfs(depth + 1);
-                visited[i] = false;
-            }
-            if (!visited[i] && !isDescending[depth] && arr[depth - 1] < i) {
+            if (!visited[i] && isCorrectWithSign(i, depth)) {
                 visited[i] = true;
                 arr[depth] = i;
                 dfs(depth + 1);
                 visited[i] = false;
             }
         }
+    }
+    static boolean isCorrectWithSign(int i, int depth) {
+        return !isDescending[depth] && arr[depth - 1] < i || isDescending[depth] && arr[depth - 1] > i;
     }
 }
 /*
