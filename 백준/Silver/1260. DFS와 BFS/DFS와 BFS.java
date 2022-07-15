@@ -70,7 +70,7 @@ public class Main {
             for (Integer next : adjList[start]) {
                 if (!visited[next]) {
                     visited[next] = true;
-                    queue.add(next);
+                    queue.offer(next);
                 }
             }
         }
