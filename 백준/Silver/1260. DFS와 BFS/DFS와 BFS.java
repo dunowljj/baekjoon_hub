@@ -5,8 +5,7 @@ public class Main {
     static int N;
     static int M;
     static int V;
-    static ArrayList<Integer>[] list;
-    static int[] arr;
+    static ArrayList<Integer>[] adjList;
     static boolean[] visited;
     static StringBuilder sb = new StringBuilder();
     public static void main(String[] args) throws IOException {
@@ -19,12 +18,11 @@ public class Main {
         M = Integer.parseInt(st.nextToken());
         V = Integer.parseInt(st.nextToken());
 
-        list = new ArrayList[N + 1];
+        adjList = new ArrayList[N + 1];
         visited = new boolean[N + 1];
-        arr = new int[N];
 
         for (int i = 0; i < N + 1; i++) {
-            list[i] = new ArrayList<>();
+            adjList[i] = new ArrayList<>();
         }
 
         for (int i = 0; i < M; i++) {
@@ -32,12 +30,12 @@ public class Main {
             int x = Integer.parseInt(st.nextToken());
             int y = Integer.parseInt(st.nextToken());
 
-            list[x].add(y);
-            list[y].add(x);
+            adjList[x].add(y);
+            adjList[y].add(x);
         }
 
-        for (int i = 0; i < list.length; i++) {
-            Collections.sort(list[i]);
+        for (int i = 0; i < adjList.length; i++) {
+            Collections.sort(adjList[i]);
         }
 
         dfs(V);
@@ -52,9 +50,9 @@ public class Main {
         visited[start] = true;
         sb.append(start).append(" ");
 
-        for (Integer x : list[start]) {
-            if (!visited[x]) {
-                dfs(x);
+        for (Integer next : adjList[start]) {
+            if (!visited[next]) {
+                dfs(next);
             }
         }
     }
@@ -69,7 +67,7 @@ public class Main {
             start = queue.poll();
             sb.append(start).append(" ");
 
-            for (Integer next : list[start]) {
+            for (Integer next : adjList[start]) {
                 if (!visited[next]) {
                     visited[next] = true;
                     queue.add(next);
@@ -82,4 +80,6 @@ public class Main {
 여러 개의 간선 가능
 정점 주어짐
 정점 번호 여러개 -> 작은 것 먼저 방문 -> 정렬
+
+인접 리스트 사용, 간선의 개수가 적기도 함.
  */
