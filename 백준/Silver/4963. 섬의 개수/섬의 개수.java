@@ -2,19 +2,16 @@ import java.io.*;
 import java.util.StringTokenizer;
 
 public class Main {
-    static boolean[][] needSearch;
     static int h;
     static int w;
     static StringBuilder sb = new StringBuilder();
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        // 최대 50, idx편의를 위해 +2하려 배열의 둘레에 0을 한 줄 생성
-        needSearch = new boolean[52][52];
         StringTokenizer st;
-        boolean noIsland = true;
-        int islandCount = 0;
+        boolean[][] needSearch;
         int[] idxMapper = {-1, 0, 1};
 
+        boolean noIsland = true;
         while(true) {
             st = new StringTokenizer(br.readLine());
             w = Integer.parseInt(st.nextToken());
@@ -23,12 +20,16 @@ public class Main {
             // 0 0 나오면 탈출
             if (w == 0 && h == 0) break;
 
+            // 최대 50, idx편의를 위해 +2하려 배열의 둘레에 0을 한 줄 생성
+            needSearch = new boolean[h + 2][w + 2];
+
             /*
             boolean으로 변환 1 -> true(방문x), 0 -> false(방문o)
             boolean은 false가 초깃값인데, 초기화시 둘레 값은 false가 된다.
             둘레는 방문해서는 안되므로, false인 값을 방문하지 않도록 설정해야 한다.
-            논리적으로; 탐색이 필요하다(true) -> 방문(dfs) / 탐색이 필요없다(false) -> 방문 x
+            논리적으로 :: 탐색이 필요하다(true) -> 방문(dfs) / 탐색이 필요없다(false) -> 방문 x
              */
+
             for (int i = 1; i <= h; i++) {
                 st = new StringTokenizer(br.readLine());
                 for (int j = 1; j <= w; j++) {
@@ -36,25 +37,20 @@ public class Main {
                 }
             }
 
+            int islandCount = 0;
             for (int i = 1; i <= h; i++) {
                 for (int j = 1; j <= w; j++) {
                     if (needSearch[i][j]) {
-                        dfs(i, j, idxMapper);
+                        dfs(i, j, idxMapper, needSearch);
                         islandCount++;
-                        noIsland = false;
                     }
                 }
             }
-            if (noIsland) {
-                sb.append(0).append("\n");
-            } else {
-                sb.append(islandCount).append("\n");
-                islandCount = 0;
-            }
+            sb.append(islandCount).append("\n");
         }
         System.out.print(sb.toString());
     }
-    static void dfs(int x, int y, int[] idxMapper) {
+    static void dfs(int x, int y, int[] idxMapper, boolean[][] needSearch) {
         needSearch[x][y] = false;
 
         for (int i = 0; i < 3; i++) {
@@ -63,7 +59,7 @@ public class Main {
                 int ny = y + idxMapper[j];
 
                 if (needSearch[nx][ny]) {
-                    dfs(nx, ny, idxMapper);
+                    dfs(nx, ny, idxMapper, needSearch);
                 }
             }
         }
