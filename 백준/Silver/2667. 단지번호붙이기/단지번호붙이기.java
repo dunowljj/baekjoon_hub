@@ -9,7 +9,7 @@ public class Main {
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+//        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
         StringBuilder answer = new StringBuilder();
         int N = Integer.parseInt(br.readLine());
 
@@ -38,7 +38,6 @@ public class Main {
 
         // 단지 수 추가
         answer.append(houseCounter.size()).append("\n");
-
         // 단지별 집 개수 정렬 후 추가
         // 통합된 노드들의 부모노드는 개수에 포함이 안되어 있으므로 + 1, 혼자인 노드는 미리 0으로 초기화 해놨으므로 +1해도 무관하다.
         List<Integer> numOfHouses = new ArrayList<>(houseCounter.values());
@@ -48,9 +47,10 @@ public class Main {
         }
 
         // 출력
-        bw.write(answer.toString().trim());
+        System.out.print(answer.toString().trim());
+     /*   bw.write(answer.toString().trim());
         bw.flush();
-        bw.close();
+        bw.close();*/
     }
 
     private static void countVillgeAndHouse(int N) {
