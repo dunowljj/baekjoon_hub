@@ -3,8 +3,6 @@ import java.util.StringTokenizer;
 
 public class Main {
     static boolean[][] needSearch;
-    static int[] idxMapper = {-1, 0, 1};
-
     static int h;
     static int w;
     static StringBuilder sb = new StringBuilder();
@@ -15,7 +13,8 @@ public class Main {
         StringTokenizer st;
         boolean noIsland = true;
         int islandCount = 0;
-        
+        int[] idxMapper = {-1, 0, 1};
+
         while(true) {
             st = new StringTokenizer(br.readLine());
             w = Integer.parseInt(st.nextToken());
@@ -40,7 +39,7 @@ public class Main {
             for (int i = 1; i <= h; i++) {
                 for (int j = 1; j <= w; j++) {
                     if (needSearch[i][j]) {
-                        dfs(i, j);
+                        dfs(i, j, idxMapper);
                         islandCount++;
                         noIsland = false;
                     }
@@ -55,7 +54,7 @@ public class Main {
         }
         System.out.print(sb.toString());
     }
-    static void dfs(int x, int y) {
+    static void dfs(int x, int y, int[] idxMapper) {
         needSearch[x][y] = false;
 
         for (int i = 0; i < 3; i++) {
@@ -64,7 +63,7 @@ public class Main {
                 int ny = y + idxMapper[j];
 
                 if (needSearch[nx][ny]) {
-                    dfs(nx, ny);
+                    dfs(nx, ny, idxMapper);
                 }
             }
         }
