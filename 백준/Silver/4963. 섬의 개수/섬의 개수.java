@@ -51,7 +51,6 @@ public class Main {
         System.out.print(sb.toString());
     }
     static void dfs(int x, int y, int[] idxMapper, boolean[][] needSearch) {
-        needSearch[x][y] = false;
 
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
@@ -59,6 +58,7 @@ public class Main {
                 int ny = y + idxMapper[j];
 
                 if (needSearch[nx][ny]) {
+                    needSearch[x][y] = false;
                     dfs(nx, ny, idxMapper, needSearch);
                 }
             }
