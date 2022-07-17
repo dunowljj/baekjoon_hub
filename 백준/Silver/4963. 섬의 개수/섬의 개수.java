@@ -7,17 +7,15 @@ public class Main {
 
     static int h;
     static int w;
-    static int islandCount = 0;
     static StringBuilder sb = new StringBuilder();
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
         // 최대 50, idx편의를 위해 +2하려 배열의 둘레에 0을 한 줄 생성
         needSearch = new boolean[52][52];
         StringTokenizer st;
         boolean noIsland = true;
-
-
+        int islandCount = 0;
+        
         while(true) {
             st = new StringTokenizer(br.readLine());
             w = Integer.parseInt(st.nextToken());
@@ -54,12 +52,8 @@ public class Main {
                 sb.append(islandCount).append("\n");
                 islandCount = 0;
             }
-
         }
-
-        bw.write(sb.toString().trim());
-        bw.flush();
-        bw.close();
+        System.out.print(sb.toString());
     }
     static void dfs(int x, int y) {
         needSearch[x][y] = false;
