@@ -9,18 +9,15 @@ public class Main {
         String input ="";
 
         while (!(input = br.readLine()).equals("0")) {
-            sb.append(input);
-
             int num = Integer.parseInt(input);
-            int reverse = Integer.parseInt(sb.reverse().toString());
-
-            sb.delete(0, sb.length());
+            int reverse = Integer.parseInt(new StringBuilder(input).reverse().toString());
 
             if (num == reverse) {
-                System.out.println("yes");
+                sb.append("yes").append("\n");
             } else {
-                System.out.println("no");
+                sb.append("no").append("\n");
             }
         }
+        System.out.print(sb.toString());
     }
 }
