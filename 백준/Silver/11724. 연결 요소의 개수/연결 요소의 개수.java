@@ -1,13 +1,9 @@
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.StringTokenizer;
-import java.util.regex.Pattern;
+import java.util.*;
 
 public class Main {
     static List<Integer>[] adjList;
     static boolean[] visited;
-    static int N;
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -37,10 +33,8 @@ public class Main {
         for (int i = 1; i < N + 1; i++) {
             if (!visited[i]) {
                 count++;
-            } else {
-                continue;
+                bfs(i);
             }
-            dfs(i);
         }
 
         bw.write(count+"");
@@ -48,13 +42,18 @@ public class Main {
         bw.close();
     }
 
-    static void dfs(int start) {
+    static void bfs(int start) {
+        Queue<Integer> queue = new LinkedList<>();
         visited[start] = true;
+        queue.add(start);
 
-        for (Integer next : adjList[start]) {
-            if (!visited[next]) {
-                visited[next] = true;
-                dfs(next);
+        while (!queue.isEmpty()) {
+            start = queue.poll();
+            for (Integer next : adjList[start]) {
+                if (!visited[next]) {
+                    queue.add(next);
+                    visited[next] = true;
+                }
             }
         }
     }
