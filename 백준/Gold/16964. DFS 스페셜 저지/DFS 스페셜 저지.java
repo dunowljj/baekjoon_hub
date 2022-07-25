@@ -3,7 +3,6 @@ import java.util.*;
 
 public class Main {
     static int[] visited;
-//    static List<Integer>[] adjList;
     static Set<Integer>[] adjSet;
     static int order[];
     static int N;
@@ -16,7 +15,6 @@ public class Main {
 
         // 방문 여부, 인접리스트를 위해 1~N
         visited = new int[N + 1];
-//        adjList = new ArrayList[N + 1];
         adjSet = new HashSet[N + 1];
         order = new int[N];
 
@@ -68,15 +66,6 @@ public class Main {
             dfs(answer, orderIdx + 1);
         }
 
-
-        /*for (Integer next : adjList[start]) {
-            if (visited[next] == 0 && order[orderIdx] == next) {
-                existToGo = true;
-                visited[next] = start;
-                dfs(next, orderIdx + 1);
-            }
-        }*/
-
         // 일치하는 노드가 하나도 없으면 이전 노드로 회귀
         if (!existToGo) {
             dfs(visited[start], orderIdx);
@@ -92,5 +81,6 @@ public class Main {
  -> 전체를 탐색하되, 체크하면서 탐색, 존재하면 1저장 후 리턴 -> 모두 탐색 후, 남은 것들을 탐색해야 한다.
 
 0번째부터 포문 돌리는게 문제가 아니고, 포기하고 깊이가 낮은 상위 노드로 이동해야한다.
-방문순서 일치 조건과 방문체크가 함께 있기때문에, 상위 노드 탐색을 못한다.
+방문순서 일치 조건과 방문체크가 함께 있기때문에, 상위 노드 탐색을 못한다. -> visited에 이전 노드값을 저장해서 되돌아간다.
+-> 시간초과가 나서 인접리스트에 리스트 부분을 HashSet으로 바꾸었다.
  */
