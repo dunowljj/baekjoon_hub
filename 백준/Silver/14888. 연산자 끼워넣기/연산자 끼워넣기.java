@@ -7,13 +7,12 @@ public class Main {
     static int max = Integer.MIN_VALUE;
     static int min = Integer.MAX_VALUE;
     static int[] operators;
-    static int N;
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
         StringTokenizer st;
 
-        N = Integer.parseInt(br.readLine());
+        int N = Integer.parseInt(br.readLine());
 
         // 숫자 입력받기
         inputNums = new int[N];
@@ -22,85 +21,62 @@ public class Main {
             inputNums[i] = Integer.parseInt(st.nextToken());
         }
 
+        // 연산자 List에 입력받기
+        operators = new int[N - 1];
         st = new StringTokenizer(br.readLine());
-//        int token = 0;
-        operators = new int[4];
-//        operators = new ArrayList<>();
+
+        int token = 0;
+        int count = 0;
         for (int i = 0; i < 4; i++) {
-            /*token = Integer.parseInt(st.nextToken());
+            token = Integer.parseInt(st.nextToken());
             while(token-- > 0) {
-                operators.add(i);
-            }*/
-            operators[i] = Integer.parseInt(st.nextToken());
+                operators[count++] = i;
+            }
         }
         visited = new boolean[N - 1];
 
-        dfs(inputNums[0], 1);
+        dfs(0, N - 1, inputNums[0]);
 
         bw.write(max+"\n"+min);
         bw.flush();
         bw.close();
     }
 
-    static void dfs(int result, int depth) {
-        if (depth == N) {
+    static void dfs(int depth, int operatorNum, int result) {
+        if (depth == operatorNum) {
             max = Math.max(max, result);
             min = Math.min(min, result);
             return;
         }
 
-        /*int before = -1;
+        int before = -1;
         for (int i = 0; i < operatorNum; i++) {
-            int operatorValue = operators.get(i); // 연산자 고유 숫자 가져오기
+            int operatorValue = operators[i]; // 연산자 고유 숫자 가져오기
+
             // 같은 자리 같은 연산자 중복 방지
             if (!visited[i] && before != operatorValue) {
                 visited[i] = true;
                 before = operatorValue;
+
                 dfs(depth + 1, operatorNum, operate(operatorValue, depth, result));
                 visited[i] = false;
             }
-        } */
-        for (int i = 0; i < 4; i++) {
-
-            if (operators[i] > 0) {
-
-
-                operators[i]--;
-//                dfs(depth + 1, operatorNum, operate(i, depth, result));
-
-                switch (i) {
-
-                    case 0:	dfs(result + inputNums[depth], depth + 1);	break;
-                    case 1:	dfs(result - inputNums[depth], depth + 1);	break;
-                    case 2:	dfs(result * inputNums[depth], depth + 1);	break;
-                    case 3:	dfs(result / inputNums[depth], depth + 1);	break;
-
-                }
-                operators[i]++;
-            }
-
         }
-
     }
-/*    private static int operate(int operatorValue, int idx, int result) {
-        int nextNum = inputNums[idx];
+    private static int operate(int operatorValue, int idx, int result) {
+        int nextNum = inputNums[idx + 1];
         switch (operatorValue) {
             case 0 :
-                 result += nextNum;
-                break;
+                return result + nextNum;
             case 1 :
-                result -= nextNum;
-                break;
+                return result - nextNum;
             case 2 :
-                result *= nextNum;
-                break;
+                return result * nextNum;
             case 3 :
-//                return result < 0 ? ((Math.abs(result) / nextNum) * -1) : (result / nextNum);
-                result /= nextNum;
-                break;
+                return result / nextNum;
         }
         return result;
-    }*/
+    }
 }
 /*
 나눗셈 : 정수 나눗셈으로 몫만 취함 -> 몫 연산으로 처리
