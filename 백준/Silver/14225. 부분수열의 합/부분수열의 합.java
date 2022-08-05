@@ -20,34 +20,28 @@ public class Main {
         }
 
         Arrays.sort(arr);
-        dfs(0, 0,0, arr);
+        dfs(0, 0, 0, arr);
 
         for (int i = 1; i < subSum.length; i++) {
             if (!subSum[i]) {
-                bw.write((i)+"");
+                bw.write((i) + "");
                 break;
             }
         }
         bw.flush();
         bw.close();
     }
-    static void dfs(int start, int depth, int sum, int[] arr) {
-        if (!subSum[sum]) {
-            subSum[sum] = true;
-        }
+    static void dfs(int idx, int depth, int sum, int[] arr) {
         if (depth == arr.length) {
+            subSum[sum] = true;
             return;
         }
 
-        for (int i = start; i < arr.length; i++) {
-            if (!visited[i]) {
-                visited[i] = true;
-                dfs(i + 1, depth + 1, sum + arr[i], arr);
-                visited[i] = false;
-            }
+        dfs(idx + 1, depth + 1, sum + arr[idx], arr);
+        dfs(idx + 1, depth + 1, sum, arr);
+
         }
     }
-}
 /*
 1~20크기 수열
 수열의 수들은 100_000이하
