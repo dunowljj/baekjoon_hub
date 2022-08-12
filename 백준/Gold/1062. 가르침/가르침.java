@@ -4,7 +4,9 @@ import java.util.StringTokenizer;
 public class Main {
     static int K;
     static int answer = 0;
-    static int[][] before;
+    static int entire = 0;
+    static int others = 0;
+
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
@@ -27,11 +29,8 @@ public class Main {
             return;
         }
 
-        int entire = 0;
-        int others = 0;
         // 숫자값으로 변환, 다시 비트로 변환해서 bits[]에 저장
         int[] bits = new int[N];
-        before = new int[26][N];
         for (int i = 0; i < N; i++) {
             String word = br.readLine();
 
@@ -47,12 +46,11 @@ public class Main {
 
                     bits[i] |= (1 << digit);
                     entire |= (1 << digit);
-
                 }
             }
         }
 
-        dfs(5, 0, others, entire, bits);
+        dfs(5, 0, entire, 0, bits);
 
         bw.write(answer+"");
         bw.flush();
@@ -65,12 +63,12 @@ public class Main {
         return digit == 0 || digit == 2 || digit == 8 || digit == 13 || digit == 19;
     }
 
-    static void dfs(int depth, int index, int others, int entire, int[] bits) {
+    static void dfs(int depth, int index, int entire, int selected, int[] bits) {
         if (depth == K) {
             // 비트값이 없다면, 만들 수 있는 단어
             int count = 0;
             for (int bit : bits) {
-                if (bit == 0) {
+                if ((bit & selected) == bit) {
                     count++;
                 }
             }
@@ -83,25 +81,14 @@ public class Main {
 
         for (int i = index; i < 26; i++) {
             if ((entire & 1 << i) != 0) {
-                for (int j = 0; j < bits.length; j++) {
-                    before[i][j] = bits[j];
-
-                    // 해당 비트만 지우기
-                    bits[j] &= ~(1 << i);
-                }
-
-                dfs(depth + 1, i + 1,others, entire, bits);
-
-                for (int j = 0; j < bits.length; j++) {
-                    bits[j] = before[i][j];
-                }
+                dfs(depth + 1, i + 1, entire, selected | 1 << i, bits);
             }
         }
 
+        // N = 1, K = 6 이면 깊이가 더 늘어나지 않는 것을 방지
         if (others + 5 < K) {
-            dfs(K, others, index, entire, bits);
+            dfs(K, index, entire, selected, bits);
         }
-        // 자체를 잘못짰다. actin이 기본적으로 체크가 된 후, 탐색을 해야한다.
 
     }
 }
