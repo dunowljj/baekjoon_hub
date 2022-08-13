@@ -27,21 +27,29 @@ public class Main {
             for (int j = 0; j < M; j++) {
                 char cur = line.charAt(j);
 
-                if (cur == '#') continue;
+                // int 기본값인 0을 벽으로 생각
 
-                if (cur == 'R') {
+                // # == 35
+                if (cur == 35) continue;
+
+                // O == 97
+                if (cur == 79) {
+                    board[i][j] = 79;
+                    continue;
+                }
+
+                // R == 82
+                if (cur == 82) {
                     red = new int[]{i, j};
-                    board[i][j] = '.';
-                    continue;
                 }
 
-                if (cur == 'B') {
+                // B == 66
+                if (cur == 66) {
                     blue = new int[]{i, j};
-                    board[i][j] = '.';
-                    continue;
                 }
 
-                board[i][j] = cur;
+
+                board[i][j] = 1;
             }
         }
 
@@ -87,7 +95,7 @@ public class Main {
                     nrx += mx;
                     nry += my;
                     // '0' 은 구멍의 위치 -> 구멍을 만나면 out
-                    if (board[nrx][nry] == 'O') {
+                    if (board[nrx][nry] == 79) {
                         redOut = true;
                         break;
                     }
@@ -165,15 +173,13 @@ public class Main {
 
 3<= N <= 10
 
-비트마스크를 어디서 사용? -> 방문여부
-
 4방향 기울이는 경우 * 4 * 4 ..
-빨간구슬, 파란구슬 위치가 이전과 같으면 중복
+빨간구슬, 파란구슬 위치가 이전과 같으면 중복 -> 이차원배열
 결국에는 방문했던 위치인지 검사하면서 탐색
 
 굴리는 방향에 다른 구슬 있는 경우?
     1) 벽없이 존재 : 해당방향끝 - 1
     2) 벽을 끼고 존재 : 상관 x
-
-
+    
+!비트마스크로 다시 풀어보기
  */
