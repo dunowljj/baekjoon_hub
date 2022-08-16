@@ -14,10 +14,12 @@ class Point1 {
 }
 
 public class Main {
+    public static final int ADDED_WALL = 3;
     static int N;
     static int M;
     static int[][] board;
     static int answer = 0;
+    static int wallCount = 0;
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -33,6 +35,10 @@ public class Main {
             st = new StringTokenizer(br.readLine());
             for (int j = 0; j < M; j++) {
                 board[i][j] = Integer.parseInt(st.nextToken());
+
+                if (board[i][j] == 1) {
+                    wallCount++;
+                }
             }
         }
 
@@ -75,12 +81,13 @@ public class Main {
 
         int[][] mapper = {{1, -1, 0, 0}, {0, 0, -1, 1}};
 
-
+        int infectCount = 0;
         // 감염 위치 찾아서 넣기
         for (int i = 0; i < N; i++) {
             for (int j = 0; j < M; j++) {
                 if (board[i][j] == 2) {
                     infected[i][j] = true;
+                    infectCount++;
                     queue.add(new Point1(i, j));
                 }
             }
@@ -106,41 +113,21 @@ public class Main {
                 // 주변이 벽이 아니고 비감염이면 감염처리
                 if (board[nx][ny] != 1 && !infected[nx][ny]) {
                     infected[nx][ny] = true;
+                    infectCount++;
                     queue.add(new Point1(nx, ny));
                 }
             }
         }
 
-        int count = 0;
+        /*int count = 0;
         for (int i = 0; i < N; i++) {
             for (int j = 0; j < M; j++) {
                 if (!infected[i][j] && board[i][j] == 0) {
                     count++;
                 }
             }
-        }
-        return count;
+        }*/
+        return (N * M) - wallCount - infectCount - ADDED_WALL;
     }
 
 }
-/*
-## 조건
-0 빈칸 , 1 벽, 2 바이러스
-안전영역 -> 벽과 바이러스 제외한 0 부분
-2의 개수는 2보다 크거나 같다.
-벽은 꼭 3개를 세워야 한다.
-
-## 시간 2초
-3 <= N,M <= 8  ; 최대 8*8 -> 64칸
-벽 3개 선택 -> N6제곱
---> 2의 18제곱  * bfs(N제곱 * 주변탐색) : 모두 탐색해도 충분하다.
-
-## 구현
-### 큐에 넣는 조건?
- 현재위치가 벽일때, 바이러스일때, 0 일때
- 현재 2 -> 주변 0이면 감염. 근처에 2이면 큐에 넣기 -> 결국 현재 감염 시 주변 1아니면 모두 감염
- 현재 1 -> 아무것도 하지 않음
- 현재 0 -> 감염된 0이면 주변 감염. 2이면 큐에 넣기 -> -> 결국 현재 감염 시  주변 1아니면 모두 감염
- 보드를 갱신하면 복잡해진다. 그래서 감염배열을 만들었는데, 방문체크를 제대로 하는 것인가?
- 방문체크를 하느니 그냥 마지막에 세는게 나을듯 싶다. 복잡하다.
- */
