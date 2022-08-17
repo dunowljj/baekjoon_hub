@@ -1,5 +1,4 @@
 import java.io.*;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.StringTokenizer;
@@ -46,7 +45,7 @@ public class Main {
             A = groups[0];
             B = groups[1];
             C = groups[2];
-            
+
             // 모두 같으면 종료
             if (A == B && B == C) {
                 answer = 1;
@@ -77,11 +76,11 @@ public class Main {
 
     private static void visit(int A, int B, int C) {
         visited[A][B] = true;
-        /*visited[B][A] = true;
+        visited[B][A] = true;
         visited[B][C] = true;
         visited[C][B] = true;
         visited[C][A] = true;
-        visited[A][C] = true;*/
+        visited[A][C] = true;
     }
 }
 
@@ -106,7 +105,7 @@ public class Main {
 ### 해결 실패
 조건문으로 연산결과가 500을 넘는 경우는 제외하고 배열 크기를 501로 맞춰보자. -> 2gb / 8 = 250mb
 생각해보니 500 초과였다가, 다른 값에 넘겨주어 성립하는 경우도 있을 것이다. 1000으로 설정해야 한다.
-
+-> 돌이 쏠린 두 개의 그룹끼리 돌을 계속 주고 받으면, 1499 까지도 가능하다. 1500 설정해야한다.
 ### 해결
 총 돌의 개수가 정해져 있기때문에, 2개만 방문체크를 하면 나머지 값은 같기 때문에 신경 안써도 된다.
 
