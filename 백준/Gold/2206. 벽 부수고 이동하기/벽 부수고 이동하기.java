@@ -74,7 +74,7 @@ public class Main {
                 // 벽인 경우
                 if (isWall[nx][ny]) {
                     // 부술수 있는지, 방문 가능인지 체크
-                    if (point.canSmash && !visited[1][nx][ny]) {
+                    if (point.canSmash && !visited[0][nx][ny]) {
                         visited[bit][nx][ny] = true;
                         queue.add(new Point1(nx, ny, nc, false));
                     }
