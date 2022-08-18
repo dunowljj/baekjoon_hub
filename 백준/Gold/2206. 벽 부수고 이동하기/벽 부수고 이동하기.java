@@ -67,27 +67,38 @@ public class Main {
                 int bit = ns == true ? 0 : 1;
 
                 // 인덱스 벗어나는 경우
-                if (nx < 0 || ny < 0 || nx >= N || ny >= M) {
+                if (nx < 0 || ny < 0 || nx >= N || ny >= M
+                || (!point.canSmash && isWall[nx][ny])) {
                     continue;
                 }
 
-                // 벽인 경우
+                if (point.canSmash && isWall[nx][ny]) {
+                    ns = false;
+                    bit = 1;
+                }
+
+                if (!visited[bit][nx][ny]) {
+                    visited[bit][nx][ny] = true;
+                    queue.add(new Point1(nx, ny, nc, ns));
+                }
+                
+               /* // 벽인 경우
                 if (isWall[nx][ny]) {
                     // 부술수 있는지, 방문 가능인지 체크
-                    if (point.canSmash && !visited[0][nx][ny]) {
+                    if (point.canSmash && !visited[0][nx][ny]) { // 여기서는 0,1무관함
                         visited[bit][nx][ny] = true;
                         queue.add(new Point1(nx, ny, nc, false));
                     }
                 }
                 // 벽이 아닌 경우 - 벽을 부쉈는지 여부에 따라 따로 방문체크
                 else {
-                    
+
                     if (!visited[bit][nx][ny]) {
                         visited[bit][nx][ny] = true;
                         queue.add(new Point1(nx, ny, nc, ns));
                     }
 
-                }
+                }*/
             }
         }
         return -1;
