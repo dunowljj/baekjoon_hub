@@ -15,19 +15,21 @@ class Point6 {
 public class Main {
     static int R;
     static int C;
+    static boolean[][] visited;
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
         StringTokenizer st = new StringTokenizer(br.readLine());
+        Queue<Point6> queueFlood = new LinkedList<>();
+        Queue<Point6> queueHedge = new LinkedList<>();
 
         R = Integer.parseInt(st.nextToken());
         C = Integer.parseInt(st.nextToken());
 
         Point6 D = null;
         Point6 S = null;
-
+        visited = new boolean[R][C];
         char[][] forest = new char[R][C];
-        List<Point6> water = new ArrayList<>(); 
         for (int i = 0; i < R; i++) {
             String input = br.readLine();
             for (int j = 0; j < C; j++) {
@@ -39,18 +41,19 @@ public class Main {
                 }
 
                 if (curr == 'S') {
-                    S = new Point6(i, j); // 어짜피 같은 위치에 올 일이 없다.
+                    queueHedge.offer(new Point6(i, j));
+                    visited[i][j] = true;
                     forest[i][j] = '.'; // 홍수낼때 편의를 위해 . 으로 변경
                 }
 
                 if (curr == '*') {
-                    water.add(new Point6(i, j));
+                    queueFlood.offer(new Point6(i, j));
                 }
             }
 
         }
 
-        int value = bfs(D, S, forest, water);
+        int value = bfs(D, forest, queueHedge, queueFlood);
         String answer = value == -1 ? "KAKTUS" : value+"";
 
         bw.write(answer);
@@ -58,18 +61,7 @@ public class Main {
         bw.close();
     }
 
-    static int bfs(Point6 D, Point6 S, char[][] forest, List<Point6> water) {
-        Queue<Point6> queueHedge = new LinkedList<>();
-        Queue<Point6> queueFlood = new LinkedList<>();
-
-        queueHedge.offer(S);
-        for (Point6 point : water) {
-            queueFlood.offer(point);
-        }
-
-        boolean[][] visited = new boolean[R][C];
-        // 고슴도치 시작점
-        visited[S.x][S.y] = true;
+    static int bfs(Point6 D, char[][] forest, Queue<Point6> queueHedge, Queue<Point6> queueFlood) {
 
         int mapper[][] = {{1, -1, 0, 0}, {0, 0, 1, -1}};
 
@@ -149,6 +141,9 @@ D,S는 한개
 물에 대한 큐, 고슴도치에 대한 큐를 따로 놓기.
 
 고슴도치 큐에 넣고, 큐 사이즈 측정 -> 사이즈만큼 순회 -> 순회 후 혹은 사이즈 측정 후 물에 대한 로직 처리
+
+다른 풀이 : 오히려 물을 먼저 범람시키고, 고슴도치를 이동하는 방식을 사용해
+ㅆ다.
 
 
 
