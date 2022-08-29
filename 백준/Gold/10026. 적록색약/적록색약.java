@@ -23,6 +23,7 @@ public class Main {
             }
         }
 
+        // 색약 아닌 경우 탐색
         for (int i = 0; i < N; i++) {
             for (int j = 0; j < N; j++) {
                 if (!visited[i][j]) {
@@ -34,6 +35,16 @@ public class Main {
         }
         bw.write(groupCount+" ");
 
+        // 색약 -> 'R' 을 'G'로 변경하여 통일
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < N; j++) {
+                if (grid[i][j] == 'R') {
+                    grid[i][j] = 'G';
+                }
+            }
+        }
+
+        // 'R'과 'G'를 같게 만든 상태에서 탐색
         visited = new boolean[N][N];
         groupCount = 0;
         for (int i = 0; i < N; i++) {
@@ -41,7 +52,7 @@ public class Main {
                 if (!visited[i][j]) {
                     visited[i][j] = true;
                     groupCount++;
-                    bfsWeak(i, j);
+                    bfs(i, j);
                 }
             }
         }
@@ -74,7 +85,7 @@ public class Main {
         }
     }
 
-    private static void bfsWeak(int i, int j) {
+    /*private static void bfsWeak(int i, int j) {
         Queue<int[]> queue = new LinkedList<>();
         queue.add(new int[]{i, j});
 
@@ -103,7 +114,7 @@ public class Main {
                 }
             }
         }
-    }
+    }*/
 
 }
 /*
@@ -119,4 +130,6 @@ RG를 다른 구역으로 봤을때의 구역의 수, 같은 구역으로 봤을
 
 방법1 그리드를 처음에 두개 만든다. 하나는 입력과 같은 그리드 하나는 R,G를 통일한 그리드
 방법2 bfs를 두 가지 만든다.
+
+방법1이 더 효율적이다.
  */
