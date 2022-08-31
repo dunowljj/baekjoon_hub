@@ -9,10 +9,8 @@ class Solution {
             Arrays.sort(sizes[i]);
         }
         
-        
-        for (int i = 0; i < sizes.length; i++) {
-            answer = Math.min(answer,getMax(sizes));    
-        }
+        answer = Math.min(answer,getMax(sizes));    
+
         
         return answer;
     }
