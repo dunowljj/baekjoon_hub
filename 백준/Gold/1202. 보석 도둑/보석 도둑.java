@@ -16,7 +16,7 @@ public class Main {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 
-        // 높은 가격순 정렬, 가격이 같다면 높은 무게 순으로 정렬, 다른 코드는 왜 오름차순인가 무게가?
+        // 높은 가격순 정렬, 가격이 같다면 높은 무게 순으로 정렬
         PriorityQueue<Jewel> jewels = new PriorityQueue<>(new Comparator<Jewel>() {
             @Override
             public int compare(Jewel o1, Jewel o2) {
@@ -32,7 +32,7 @@ public class Main {
         int K = Integer.parseInt(st.nextToken()); // 가방 개수
 
 
-        // 보석 우선순위큐에 넣기. 비싼순 정렬
+        // 보석 우선순위큐에 넣기
         for (int i = 0; i < N; i++) {
             st = new StringTokenizer(br.readLine());
             int weight = Integer.parseInt(st.nextToken());
@@ -60,6 +60,7 @@ public class Main {
 
             // 보석 무게보다 큰 것 중 최솟값 구해서 사용처리(제거)
             int optimalBag = capacities.higherKey(jewel.weight - 1); //higher은 더 큰수부터 검색이므로, -1해서 자신까지 검색
+
             // 방금 사용한 가방이 마지막 가방이라면 Map에서 제거
             if (capacities.get(optimalBag) == 1) {
                 capacities.remove(optimalBag);
@@ -81,7 +82,6 @@ public class Main {
 /*
 보석 가격 합의 최댓값
 
-
 ## 범위
 총 보석 수 1~30만
 총 가발 수 1~30만
@@ -96,15 +96,8 @@ public class Main {
 
 ## 시간복잡도
 가방 개수를 배열로 만들어 모두 탐색 시, 시간은 가방 개수 최대 30만 * 보석의 개수 최대 30만 -> 9 * 10^10
-->범위 탐색을 이용해보자.
+-> Tree의 범위 탐색을 이용해보자. TreeSet을 사용하면 중복되는 가방 무게가 사라진다. TreeMap을 사용해야한다.
 
-
-higher을 사용하면 더 큰 수가 찾아진다. 하지만 가방에는 같은무게면 들어갈 수 있다. 보석 무게와 동일한 것도 검색하기 위해 보석 무게에서 1을 빼자.
-
-
-문제 : TreeSet을 사용하면 중복되는 가방 무게가 사라진다. TreeMap 사용.
-
-
-비싼거를 무조건 담는다고 최댓값이 나오진 않는다?
-
+higherKey()를 사용하면 더 큰 수 중 최솟값이 찾아진다. 하지만 가방에는 같은무게면 들어갈 수 있다.
+보석 무게와 동일한 것도 검색하기 위해 검색하는 보석 무게에서 1을 빼자.
  */
