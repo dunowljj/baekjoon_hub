@@ -22,7 +22,7 @@ public class Main {
                 continue;
             }
 
-            if (!set.contains(num) && set.higher(num) != null) {
+            if (!set.contains(num)) {
                 set.remove(set.higher(num));
                 set.add(num);
             }
