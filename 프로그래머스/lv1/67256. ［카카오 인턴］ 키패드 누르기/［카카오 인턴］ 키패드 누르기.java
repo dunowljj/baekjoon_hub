@@ -13,71 +13,67 @@ class Point {
 }
 
 class Solution {
+    Point[] keypad = new Point[12 + 1];
+    
+    // 왼손 오른손 시작 위치
+    int left = 10;
+    int right = 12;
+    
+    boolean isRightHand = false;
+    
     public String solution(int[] numbers, String hand) {
         StringBuilder sb = new StringBuilder();
         
-        boolean isRightHand = hand.equals("right") ? true : false;
+        isRightHand = hand.equals("right") ? true : false;
         
         // 1~12에 각 위치 (Point) 집어넣기  (keypad의 인덱스에 번호 입력시 해당 위치가 나온다.)
-        Point[] keypad = new Point[12 + 1];
         for (int i = 0; i < 12; i++) {
             keypad[i + 1] = new Point(i / 3 ,i % 3);
         }
         
         // 0은 그냥 직접 넣어주기
-        keypad[0] = new Point(3, 1);
-        
-        // 왼손 오른손 시작 위치
-        int left = 10;
-        int right = 12;
-        
+        keypad[0] = keypad[11];
+
+                
         for (int i = 0; i < numbers.length; i++) {
             int dest = numbers[i];
+            char used = getHand(dest);
             
-            // 왼쪽일때
-            if (isLeftSide(dest)) {
-                left = dest;
-                sb.append('L');
-                
-            // 오른쪽일때
-            } else if (isRightSide(dest)) {
-                right = dest;
-                sb.append('R');
-                
-            // 가운데라인
-            } else {
-                
-                int toRight = keypad[dest].distanceTo(keypad[right]);
-                int toLeft = keypad[dest].distanceTo(keypad[left]);
+            if (used == 'R') right = dest;
+            if (used == 'L') left = dest;
             
-                // 왼손이 가까움
-                if (toRight > toLeft) {
-                    left = dest;
-                    sb.append('L');
-
-                // 오른손이 가까움
-                } else if (toRight < toLeft) {
-                    right = dest;
-                    sb.append('R');
-                }
-
-                // 거리가 같을때
-                else {
-
-                    // 오른손잡이
-                    if (isRightHand) {
-                        right = dest;
-                        sb.append('R');
-                    // 왼손잡이
-                    } else {
-                        left = dest;
-                        sb.append('L');
-                    }
-                }
-            }
+            sb.append(getHand(dest));
         }
         
         return sb.toString();
+    }
+    
+    private char getHand(int dest) {
+        // 왼쪽일때
+        if (isLeftSide(dest)) {
+            return 'L';
+        }    
+        // 오른쪽일때
+        if (isRightSide(dest)) {
+            return 'R';
+        }
+
+        // 가운데라인
+        int toRight = keypad[dest].distanceTo(keypad[right]);
+        int toLeft = keypad[dest].distanceTo(keypad[left]);
+
+        // 왼손이 가까움
+        if (toRight > toLeft) {
+            return 'L';
+        } 
+        
+        // 오른손이 가까움        
+        if (toRight < toLeft) {
+            return 'R';
+        }
+
+        // 거리 같으면 손 방향
+        return isRightHand ? 'R' : 'L';
     }
     
     private boolean isLeftSide(int dest) {
