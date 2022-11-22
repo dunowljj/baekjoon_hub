@@ -5,22 +5,18 @@ class Solution {
     public int[] solution(String s) {
         
         while (!s.equals("1")) {
-            int numOfOne = count(s); 
-            s = Integer.toBinaryString(numOfOne);
+            int zeroCount = s.length();
+            
+            s = s.replace("0", "");
+            zeroCount -= s.length();
+            removeCount += zeroCount;
+            
+            int oneCount = s.length();
+            s = Integer.toBinaryString(oneCount);
+            
             changeCount++;
         }
         
         return new int[]{changeCount, removeCount};
-    }
-    
-    private int count(String s) {
-        int count = 0;
-        
-        for (int i = 0; i < s.length(); i++) {
-            if (s.charAt(i) == '1') count++;
-            else removeCount++;
-        }
-        
-        return count;
     }
 }
