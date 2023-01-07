@@ -9,10 +9,9 @@ public class Main {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
 
-        String first = st.nextToken();
-        double a = Double.parseDouble(first);
+        BigDecimal bigDecimal = new BigDecimal(st.nextToken());
         int b = Integer.parseInt(st.nextToken());
-        BigDecimal result = BigDecimal.valueOf(a).pow(b);
-        System.out.println(result.toPlainString());
+        
+        System.out.println(bigDecimal.pow(b).toPlainString());
     }
 }
