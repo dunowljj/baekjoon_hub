@@ -11,6 +11,12 @@ public class Main {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         String expression = br.readLine();
 
+//        solution1(answer, expression);
+
+        solution2(answer, expression);
+    }
+
+    private static void solution1(int answer, String expression) {
         final Pattern PATTERN_OF_NUMBER = Pattern.compile("[0-9]+");
         final Pattern PATTERN_OF_OPERATOR = Pattern.compile("[\\+\\-]");
 
@@ -22,10 +28,10 @@ public class Main {
         answer += start;
 
         while (MATCHER_OF_OPERATOR.find()) {
+            String operator = MATCHER_OF_OPERATOR.group();
             MATCHER_OF_NUMBER.find();
             int num = Integer.parseInt(MATCHER_OF_NUMBER.group());
 
-            String operator = MATCHER_OF_OPERATOR.group();
 
             if (operator.equals("+")) {
                 answer += num;
@@ -43,4 +49,50 @@ public class Main {
 
         System.out.print(answer);
     }
+
+    private static void solution2(int answer, String expression) {
+        int sum = 0;
+        int idx = expression.indexOf("-");
+        String front;
+        String back;
+        if (idx == -1) {
+            front = expression;
+
+        } else {
+            front = expression.substring(0, idx);
+            back = expression.substring(idx);
+
+            String[] split = back.split("[\\-\\+]");
+            for (int i = 1; i < split.length; i++) {
+                sum -= Integer.parseInt(split[i]);
+            }
+        }
+
+        for (String num : front.split("[\\+\\-]")) {
+            sum += Integer.parseInt(num);
+        }
+        
+        System.out.println(sum);
+    }
 }
+
+/*
+'-'에 괄호를 칠때가 문제이다.
+해당 시점부터 괄호가 쳐지는 모든 구간의 부호가 바뀌어야 한다.
+
+즉, - 부호가 나온 시점부터 뒤에 있는 부호들은 바뀔 수 있다.
+
+
+최소로 만들려면 어떻게 해야하나?
++가 있는 부분을 - 로 묶어야 한다.
+
+ex)
+10 - 10 + 50 + 30 ==> 10 - (10 + 50 + 30)
+10 - 20 - 30 + 50 ==> 10 - 20 - (30 + 50)
+
+1) - 부호 찾기
+2) 찾는다면, 다음 부호 확인해서 + 인 경우 -로 변경
+
+--> 결국 처음 -를 찾은 이후 모든 + 부호는 - 로 변경가능하다.
+
+ */
