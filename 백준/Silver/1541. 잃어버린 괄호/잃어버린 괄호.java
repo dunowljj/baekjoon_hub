@@ -11,12 +11,30 @@ public class Main {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         String expression = br.readLine();
 
-//        solution1(answer, expression);
-
-        solution2(answer, expression);
+//        solution1(expression);
+//        solution2(expression);
+        solution3(expression);
     }
 
-    private static void solution1(int answer, String expression) {
+    private static void solution3(String expression) {
+        int answer = 0;
+        String[] splited = expression.split("-");
+
+        for (String s : splited[0].split("\\+")) {
+            answer += Integer.parseInt(s);
+        }
+
+        for (int i = 1; i < splited.length; i++) {
+            for (String s : splited[i].split("\\+")) {
+                answer -= Integer.parseInt(s);
+            }
+        }
+
+        System.out.print(answer);
+    }
+
+    private static void solution1(String expression) {
+        int answer = 0;
         final Pattern PATTERN_OF_NUMBER = Pattern.compile("[0-9]+");
         final Pattern PATTERN_OF_OPERATOR = Pattern.compile("[\\+\\-]");
 
@@ -50,7 +68,9 @@ public class Main {
         System.out.print(answer);
     }
 
-    private static void solution2(int answer, String expression) {
+    private static void solution2(String expression) {
+        int answer = 0;
+
         int sum = 0;
         int idx = expression.indexOf("-");
         String front;
@@ -71,7 +91,7 @@ public class Main {
         for (String num : front.split("[\\+\\-]")) {
             sum += Integer.parseInt(num);
         }
-        
+
         System.out.println(sum);
     }
 }
