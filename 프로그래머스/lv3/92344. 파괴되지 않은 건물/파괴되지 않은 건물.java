@@ -1,60 +1,78 @@
 class Solution {
     
-    static final int TYPE_ATTACK = 1;
-    static final int TYPE_RECOVERY = 2;
-    
-    public int solution(int[][] board, int[][] skill) {
-        int[][] prefixSum_board = new int[board.length + 1][board[0].length + 1];
+    enum Type {
+        ATTACK(1), RECOVERY(2);
+
+        private int value;
         
-        for (int[] sk : skill) {
-            if (sk[0] == TYPE_ATTACK) attack(prefixSum_board, sk[1], sk[2], sk[3], sk[4], sk[5]);
-            else if (sk[0] == TYPE_RECOVERY) recovery(prefixSum_board, sk[1], sk[2], sk[3], sk[4], sk[5]);        
-            
+        Type(int value) {
+            this.value = value;
         }
         
-        prefixSum(prefixSum_board); // 누적합 구하기
-        merge(board, prefixSum_board);
+        private int value() {
+            return this.value;
+        }
+        
+        public static Type findTypeByValue(int value) {
+            for(Type type : values()) {
+                if (type.value() == value) return type;
+            }
+            
+            throw new IllegalArgumentException("잘못된 타입입니다.");
+        }
+    }
+    
+    public int solution(int[][] board, int[][] skills) {
+        int[][] sumBoard = new int[board.length + 1][board[0].length + 1];
+        
+        for (int[] skill : skills) {
+            Type type = Type.findTypeByValue(skill[0]);
+            if (type == Type.ATTACK) attack(sumBoard, skill[1], skill[2], skill[3], skill[4], skill[5]);
+            else if (type == Type.RECOVERY) recovery(sumBoard, skill[1], skill[2], skill[3], skill[4], skill[5]);        
+        }
+        
+        prefixSum(sumBoard);
+        merge(board, sumBoard);
         return countBuildings(board);
     }
     
-    private void attack(int[][] prefixSum_board, int r1, int c1, int r2, int c2, int degree) {
-        update(prefixSum_board, r1, c1, r2, c2, -1 * degree);
+    private void attack(int[][] sumBoard, int r1, int c1, int r2, int c2, int degree) {
+        update(sumBoard, r1, c1, r2, c2, -1 * degree);
     }
     
-    private void recovery(int[][] prefixSum_board, int r1, int c1, int r2, int c2, int degree) {
-        update(prefixSum_board, r1, c1, r2, c2, degree);
+    private void recovery(int[][] sumBoard, int r1, int c1, int r2, int c2, int degree) {
+        update(sumBoard, r1, c1, r2, c2, degree);
     }
     
-    private void update(int[][] prefixSum_board, int r1, int c1, int r2, int c2, int value) {
-        prefixSum_board[r1][c1] += value;
-        prefixSum_board[r1][c2 + 1] += -value;  
-        prefixSum_board[r2 + 1][c1] += -value;
-        prefixSum_board[r2 + 1][c2 + 1] += value;
+    private void update(int[][] sumBoard, int r1, int c1, int r2, int c2, int value) {
+        sumBoard[r1][c1] += value;
+        sumBoard[r1][c2 + 1] -= value;  
+        sumBoard[r2 + 1][c1] -= value;
+        sumBoard[r2 + 1][c2 + 1] += value;
     }
     
-    private void prefixSum(int[][] prefixSum_board) {
+    private void prefixSum(int[][] sumBoard) {
         // 누적합 : 왼 -> 오
-        for (int row = 0; row < prefixSum_board.length - 1; row++) {
-            for (int col = 0; col < prefixSum_board[0].length - 1; col++) {    
-                prefixSum_board[row][col + 1] += prefixSum_board[row][col];
+        for (int row = 0; row < sumBoard.length - 1; row++) {
+            for (int col = 0; col < sumBoard[0].length - 1; col++) {    
+                sumBoard[row][col + 1] += sumBoard[row][col];
             }
         }
         
         // 누적합 : 위 -> 아래
-        for (int col = 0; col < prefixSum_board[0].length - 1; col++) {
-            for (int row = 0; row < prefixSum_board.length - 1; row++) {
-                prefixSum_board[row + 1][col] += prefixSum_board[row][col];
+        for (int col = 0; col < sumBoard[0].length - 1; col++) {
+            for (int row = 0; row < sumBoard.length - 1; row++) {
+                sumBoard[row + 1][col] += sumBoard[row][col];
             }
         }
     }
     
-    private int[][] merge(int[][] board, int[][] prefixSum_board) {
+    private int[][] merge(int[][] board, int[][] sumBoard) {
         for (int i = 0; i < board.length; i++) {
             for (int j = 0; j < board[0].length; j++) {
-                board[i][j] += prefixSum_board[i][j];
+                board[i][j] += sumBoard[i][j];
             }
         }
-        
         return board;
     }
     
@@ -77,8 +95,6 @@ class Solution {
         }
             System.out.println();
     }
-    
-    
 }
 
 /*
