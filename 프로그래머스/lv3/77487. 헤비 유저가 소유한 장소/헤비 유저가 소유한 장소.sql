@@ -1,5 +1,5 @@
-SELECT * FROM places WHERE host_id IN 
-    (SELECT host_id FROM places
-        GROUP BY host_id
-            HAVING count(host_id) >= 2)
-
+SELECT ID, NAME, HOST_ID FROM PLACES
+    WHERE HOST_ID IN (SELECT HOST_ID
+                        FROM PLACES
+                        GROUP BY HOST_ID
+                     HAVING count(HOST_ID) >= 2)
