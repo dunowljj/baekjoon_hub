@@ -64,17 +64,22 @@ class Solution {
             .append(solve(v))
             .append(')');
         
-        // 처음, 마지막 문자 제거
-        if (u.length() != 0) {
-            u = u.substring(1, u.length() - 1);
-        }
+        // // 처음, 마지막 문자 제거
+        // if (u.length() != 0) {
+        //     u = u.substring(1, u.length() - 1);
+        // }
         
-        // 괄호 방향 뒤집기
-        for (char ch : u.toCharArray()) {
-            if (ch == '(') result.append(')');
-            if (ch == ')') result.append('(');
+        // 괄호 방향 뒤집기 (처음, 끝 괄호 제외)
+        if (u.length() >= 4) {
+            char[] arr =  u.toCharArray();
+            
+            for (int i = 1; i < arr.length - 1; i++) {
+                char ch = arr[i];
+                if (ch == '(') result.append(')');
+                if (ch == ')') result.append('(');
+            }
         }
-        
+            
         return result.toString();
         
     }
