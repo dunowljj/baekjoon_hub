@@ -76,7 +76,7 @@ class Solution {
                 
                 User user = userMap.get(uid);                
                 user.setName(nickName);
-                userMap.put(uid, user);
+                // userMap.put(uid, user);
                 // continue;
             }
         }
