@@ -9,7 +9,7 @@ class Solution {
         for (int size = 1; size <= sLen / 2; size++) {
             int len = sLen;
             int boundCount = 1;
-            boolean binded = false;
+            boolean bound = false;
 
             for (int i = 0; i <= sLen - (2 * size); i += size) {
                 // 해당 문자열 다음 인덱스부터 단위만큼 같은지 확인
@@ -19,23 +19,21 @@ class Solution {
                 // 같다면 묶을 수 있다.
                 if (sub1.equals(sub2)) {
                     len -= size; // 묶은 만큼 제외
-                    binded = true;
+                    bound = true;
                     boundCount++;
                 }
 
                 // 압축도중 다른 문자가 나온 경우 : 문자열에 숫자 1개가 추가되므로 +1해주기
-                else if (binded) {
-                    len ++;
-                    if (boundCount >= 10) len++;
-                    binded = false;
+                else if (bound) {
+                    len += Math.log10(boundCount) + 1;
+                    bound = false;
                     boundCount = 1;
                 }
             }
             
             // 마지막 숫자 추가 안된 부분
-            if (binded) {
-                len ++;
-                if (boundCount >= 10) len ++;
+            if (bound) {  
+                len += Math.log10(boundCount) + 1;
             }
             
             minLength = Math.min(minLength, len);
