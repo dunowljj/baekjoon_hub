@@ -19,11 +19,6 @@ class Solution {
             this.end = toSecond(startAndEnd[1]);
         }
         
-        Log(int start, int end) {
-            this.start = start;
-            this.end = end;
-        }
-        
         private int toSecond(String time) {
             String[] splited = time.split(":");
             int hour = Integer.parseInt(splited[0]);
