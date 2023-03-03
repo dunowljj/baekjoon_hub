@@ -1,13 +1,8 @@
 import java.util.*;
 import java.util.stream.*;
 
-import static java.util.stream.Collectors.*;
-import static java.util.Comparator.*;
-
-
 class Solution {
-    private static final String TIME_SPLITOR = ":";
-    private static final String FRONT_ZERO = "0";
+    private static final String TIME_SPLITTER = ":";
     
     class Log {
         int start;
@@ -18,21 +13,11 @@ class Solution {
             this.start = toSecond(startAndEnd[0]);
             this.end = toSecond(startAndEnd[1]);
         }
-        
-        private int toSecond(String time) {
-            String[] splited = time.split(":");
-            int hour = Integer.parseInt(splited[0]);
-            int minute = Integer.parseInt(splited[1]);
-            int second = Integer.parseInt(splited[2]);
-
-            return (60 * 60 * hour) + (60 * minute) + second;
-        }
     }
     
     class Section {
         int[] viewCounts;
         
-       
         Section(int play_second) {
             viewCounts = new int[play_second + 1];
         }
@@ -84,7 +69,7 @@ class Solution {
     }
     
     private int toSecond(String time) {
-        String[] splited = time.split(":");
+        String[] splited = time.split(TIME_SPLITTER);
         int hour = Integer.parseInt(splited[0]);
         int minute = Integer.parseInt(splited[1]);
         int second = Integer.parseInt(splited[2]);
