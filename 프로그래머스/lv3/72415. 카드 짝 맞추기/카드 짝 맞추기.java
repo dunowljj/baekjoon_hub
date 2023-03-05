@@ -39,21 +39,6 @@ class Solution {
             if (x != point.x) return false;
             return y == point.y;
         }
-
-        @Override
-        public int hashCode() {
-            int result = x;
-            result = 31 * result + y;
-            return result;
-        }
-
-        @Override
-        public String toString() {
-            return "Point{" +
-                    "x=" + x +
-                    ", y=" + y +
-                    '}';
-        }
     }
 
     public int solution(int[][] board, int r, int c) {
@@ -83,24 +68,14 @@ class Solution {
                         card.setPair(pair);
                         pair.setPair(card);
                     }
-                    
+
                     cards.add(card);
                 }
             }
         }
 
         boolean[] visited = new boolean[cards.size()];
-
-        // 시작점이 숫자가 있는 위치라면 방문체크 -> 해당 카드를 안뒤집고 가는 경우가 더 효율적일 수 있는데, 방문체크를 해버리면 다시 돌아오지 못한다.
-//        for (Card card : cards) {
-//            if ((card.point).equals(new Point(r, c))) {
-//                visited[cards.indexOf(card)] = true;
-//                break;
-//            }
-//        }
-
-        // dfs
-        findMinShortCut(visited, new Point(r, c), cards, 0, board);
+        findMinShortCut(visited, new Point(r, c), cards, 0, board); // dfs
 
         return min + enterCount;
     }
