@@ -2,10 +2,10 @@ import java.util.*;
 
 class Solution {
     
-    static class Student {
+    static class Table {
         String[] row;
         
-        Student(String[] row) {
+        Table(String[] row) {
             this.row = row;
         }
     }
@@ -13,18 +13,18 @@ class Solution {
     int answer = 0;
     
     public int solution(String[][] relation) {
-        List<Student> students = new ArrayList<>();
-        for (String[] row : relation) students.add(new Student(row));
+        List<Table> tables = new ArrayList<>();
+        for (String[] row : relation) tables.add(new Table(row));
         
         int colCount = relation[0].length;
         int rowCount = relation.length;
         Set<String> visited = new HashSet<>();
         
-        findKeys(students, colCount, rowCount, visited);
+        findKeys(tables, colCount, rowCount, visited);
         return answer == 0 ? 1 : answer;
     }
     
-    private void findKeys(List<Student> students, int colCount, int rowCount, Set<String> visited) {
+    private void findKeys(List<Table> tables, int colCount, int rowCount, Set<String> visited) {
         List<List<Integer>> combs;
         List<Integer> indexes;
         
@@ -36,7 +36,7 @@ class Solution {
             makeCombs(indexes, visited, combs, new StringBuilder(), 0, size); // 최소성 만족하는 조합을 찾는다.
             
             for (List<Integer> comb : combs) {    
-                findKeyByBruteForce(students, rowCount, visited, comb); // 유일성을 검사해서 후보키를 찾는다.
+                findKeyByBruteForce(tables, rowCount, visited, comb); // 유일성을 검사해서 후보키를 찾는다.
             }
         }
     }
@@ -53,7 +53,7 @@ class Solution {
         if (comb.length() == size) {
             // (방문배열에 있는) 사용했던 모든 후보키 조합에 대해서 최소성 검사
             for (String vComb : visited) {
-                if (!isMiniamal(comb.toString(), vComb)) return;
+                if (!isMinimal(comb.toString(), vComb)) return;
             }
 
             //  조합을 사용하기 편하게 Integer리스트에 변환해서 넣기
@@ -70,21 +70,21 @@ class Solution {
         }
     }
     
-    private boolean isMiniamal(String comb, String vComb) {
+    private boolean isMinimal(String comb, String vComb) {
         for (char v : vComb.toCharArray()) { 
             if (!comb.contains(v +"")) return true;
         }
         return false;
     }
         
-    private void findKeyByBruteForce(List<Student> students, int rowCount, Set<String> visited, List<Integer> comb) {
+    private void findKeyByBruteForce(List<Table> tables, int rowCount, Set<String> visited, List<Integer> comb) {
         
         // !Unique : row끼리 (comb에 있는) 특정 column들의 값이 모두 일치하는 경우 종료 
         for (int i = 0; i < rowCount; i++) {
-            Student now = students.get(i);
+            Table now = tables.get(i);
             
             for (int j = 0; j < rowCount; j++) {
-                Student next = students.get(j);
+                Table next = tables.get(j);
                 if (i != j && isSame(now, next, comb)) return;
             }
         }
@@ -98,7 +98,7 @@ class Solution {
         return;
     }
     
-    private boolean isSame(Student now, Student next, List<Integer> comb) {
+    private boolean isSame(Table now, Table next, List<Integer> comb) {
         int count = 0;
         for (int col : comb) {
             if ((now.row[col]).equals(next.row[col])) count++;
