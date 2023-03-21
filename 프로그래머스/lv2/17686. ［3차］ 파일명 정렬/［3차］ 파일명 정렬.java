@@ -27,7 +27,7 @@ class Solution {
         }
     }
 
-    static final Pattern pattern = Pattern.compile("([a-zA-Z.\\-\\s]+)([0-9]{1,5})(.*)");
+    static final Pattern pattern = Pattern.compile("([a-zA-Z-.\\s]+)([0-9]{1,5})(.*)");
 
     public String[] solution(String[] files) {
             return IntStream.range(0, files.length)
