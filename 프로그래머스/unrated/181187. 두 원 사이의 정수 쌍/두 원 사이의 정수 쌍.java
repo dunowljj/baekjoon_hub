@@ -1,5 +1,5 @@
 class Solution {
-    private static final double epsilon = 0.0001d;
+    private static final double epsilon = 0.000001d;
     
     public long solution(long r1, long r2) {    
         long answer = 0;
@@ -12,8 +12,8 @@ class Solution {
                 count1 = Math.sqrt(r1 * r1 - i * i);
                 
                 // x축에 붙어있지 않는 경우 && 작은 원의 한 지점의 높이가 정수인 경우
-                int count1Int = (int) count1;
-                if (count1 - count1Int == 0.0) answer++;
+
+                if (count1 - (int) count1 == 0.0) answer++;
             
                 answer += (long) count2 - (long) count1;   
             }
