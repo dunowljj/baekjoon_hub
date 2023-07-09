@@ -8,7 +8,7 @@
 
 ### 분류
 
-브루트포스 알고리즘(bruteforcing), 그래프 이론(graphs), 구현(implementation)
+브루트포스 알고리즘, 구현
 
 ### 문제 설명
 
