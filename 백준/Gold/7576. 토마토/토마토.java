@@ -1,96 +1,105 @@
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.*;
 
 public class Main {
-    static int[][] tomatoBox;
-    static int[][] mapper = {{1,0,-1,0}, {0,1,0,-1}};
-    static int M;
-    static int N;
-    static int becomeRipeCount = 0;
-    static int unripeCount = 0;
-    static StringBuilder sb = new StringBuilder();
+
+    public static final int RIPEN = 1;
+    public static final int EMPTY = -RIPEN;
+    public static final int NOT_RIPEN = 0;
+    static int[][] mapper = {{0, 0, -1, 1}, {1, -1, 0, 0}};
+
+    static int answer = 0;
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
         StringTokenizer st = new StringTokenizer(br.readLine());
-        M = Integer.parseInt(st.nextToken());
-        N = Integer.parseInt(st.nextToken());
 
-        Queue<int[]> queue = new LinkedList<>();
-        tomatoBox = new int[N][M];
+        int M = Integer.parseInt(st.nextToken());
+        int N = Integer.parseInt(st.nextToken());
+        int[][] box = new int[N][M];
+
+        boolean alreadyRipen = true; // 주어진 박스에 토마토가 모두 익은 경우 체크
+        Queue<Point> queue = new LinkedList<>();
         for (int i = 0; i < N; i++) {
             st = new StringTokenizer(br.readLine());
             for (int j = 0; j < M; j++) {
-                int status = Integer.parseInt(st.nextToken());
-                tomatoBox[i][j] = status;
+                int tomatoStatus = Integer.parseInt(st.nextToken());
+                box[i][j] = tomatoStatus;
 
-                if (status == 0) {
-                    unripeCount++;
-                } else if (status == 1) {
-                    queue.add(new int[]{i,j,0});
-                }
-            }
-        }
-        int sum = 0;
-
-        for (int i = 0; i < N; i++) {
-            for (int j = 0; j < M; j++) {
-                if (tomatoBox[i][j] == 1) {
-                    sum += bfs(queue);
-                }
+                if (tomatoStatus == NOT_RIPEN) alreadyRipen = false;
+                else if (tomatoStatus == RIPEN) queue.offer(new Point(i, j));
             }
         }
 
-        if (becomeRipeCount == unripeCount) {
-            sb.append(sum+"");
+        if (alreadyRipen) {
+
         } else {
-            sb.append("-1");
-        }
-
-        bw.write(sb.toString());
-        bw.flush();
-        bw.close();
-    }
-
-    static int bfs(Queue<int[]> queue) {
-        int depth = 0;
-        while (!queue.isEmpty()) {
-            int[] curr = queue.poll();
-            for (int i = 0; i < 4; i++) {
-                int nx = curr[0] + mapper[0][i];
-                int ny = curr[1] + mapper[1][i];
-                int nd = curr[2] + 1;
-
-
-                if (0 <= nx && nx < N && 0 <= ny && ny < M) {
-                    if (tomatoBox[nx][ny] == 0) {
-                        tomatoBox[nx][ny] = 1;
-                        queue.add(new int[]{nx, ny, nd});
-                        becomeRipeCount++;
-                        depth = nd;
-                    }
+            while (true) {
+                bfs(queue, box, N, M); // 하루치만 탐색하고 큐에 데이터 유지
+                answer++;
+                if (areAllRipen(box, N, M)) break;
+                // 모두 익지 않았는데 큐가 비어있으면 모두 익지 못하는 상황이다.
+                else if (queue.isEmpty()) {
+                    answer = -1;
+                    break;
                 }
             }
         }
-        return depth;
+
+        System.out.print(answer);
     }
 
+    private static void bfs(Queue<Point> queue, int[][] box, int n, int m) {
+        int size = queue.size();
+
+        for (int i = 0; i < size; i++) {
+
+            Point now = queue.poll();
+            for (int dir = 0; dir < 4; dir++) {
+                int nx = now.x + mapper[0][dir];
+                int ny = now.y + mapper[1][dir];
+
+                // 이미 익었거나, 빈칸은 탐색하지 않는다. -> 익지 않은 경우를 제외하고 탐색하지 않음
+                if (nx < 0 || nx >= n || ny < 0 || ny >= m
+                        || box[nx][ny] != NOT_RIPEN) continue;
+
+                box[nx][ny] = RIPEN;
+                queue.offer(new Point(nx, ny));
+            }
+        }
+
+    }
+
+    private static boolean areAllRipen(int[][] box, int n, int m) {
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                if (box[i][j] == NOT_RIPEN) return false;
+            }
+        }
+        return true;
+    }
+
+    static class Point {
+        int x;
+        int y;
+
+        public Point(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
+    }
 }
 /*
-대각선 토마토에는 영향을 주지 못한다. 혼자 저절로 익지 않는다. -> 익은 토마토의 인접한 토마토들만 익는다.
-하루 지나면 인접 토마토가 익는다.
+1 : 익은 토마토
+0 : 익지 않은 토마토
+-1 : 빈칸
 
-며칠이 지나면 토마토들이 모두 익는지 최소 일수 구하기.
+문제 : 며칠이 지나야 모두 익는가?
 
-2 <= N, M <= 1000
+익었는지 검사할때마다 N*M(100만) 만큼 순회
+100만을 순회하면서 4개씩 탐색?
+익은 토마토 위치를 기억하는게 의미가 있을까?
 
--1 빈칸, 0 안익음, 1 익음
-모두 익지 못하면 -1
-
-문제는 모두 익지 못하는지 익는지 체크하는 것인데, 처음에 배열을 만들면서 0의 개수를 세고, 값을 고칠때마다 카운트를 추가해서 0 개수와 비교한다.
-
-
-*문제 : 익는 것은 모든 1부터 동시에 시작된다. 예시로 양쪽끝에 1이 있다면, 1이 하나일때보다 시간이 절반이 걸릴 것이다.
--> 해결 : 탐색을 동시에 해야한다. 미리 큐에 1인 좌표들을 모두 넣어놓고, bfs탐색을 시작한다.
  */
