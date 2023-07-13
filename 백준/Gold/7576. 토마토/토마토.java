@@ -36,12 +36,11 @@ public class Main {
             }
         }
 
-        while (true) {
-            // 이미 다 익었으면 0인 day값 출력
-            if (areAllUnripe(unripeCount)) break;
+        // 이미 다 익었으면 수행하지 않고 지나친다. -> 디폴트 0인 day값 출력
+        while (isUnripeExist(unripeCount)) {
 
-            // 모두 익지 않았는데 큐가 비어있으면 모두 익지 못하는 상황이다.
-            else if (queue.isEmpty()) {
+            // 모두 익지 않았는데 익은 위치를 넣어놓은 큐가 비어있으면 모두 익지 못하는 상황이다.
+            if (queue.isEmpty()) {
                 day = -1;
                 break;
             }
@@ -53,8 +52,8 @@ public class Main {
         System.out.print(day);
     }
 
-    private static boolean areAllUnripe(int unripeCount) {
-        return unripeCount == 0;
+    private static boolean isUnripeExist(int unripeCount) {
+        return unripeCount != 0;
     }
 
     private static void passOneDay(Queue<Point> queue, int[][] box, int n, int m) {
@@ -100,5 +99,5 @@ public class Main {
 (익은 토마토의 위치의 수 * 4)를 최대 N+M번 탐색 -> 익은 토마토의 위치에 따라 연산 수가 상이하다.
 
 [공간]
-N*M
+O(N*M)
  */
