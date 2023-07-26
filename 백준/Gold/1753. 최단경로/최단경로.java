@@ -35,6 +35,8 @@ public class Main {
         Arrays.fill(distances, Integer.MAX_VALUE);
         distances[start] = 0;
 
+        boolean[] visited = new boolean[V + 1];
+
         List<Node>[] graph = new ArrayList[V + 1];
         for (int i = 0; i < V + 1; i++) {
             graph[i] = new ArrayList<>();
@@ -55,8 +57,10 @@ public class Main {
         while (!pq.isEmpty()) {
             Node now = pq.poll();
 
+            visited[now.no] = true;
+
             for (Node next : graph[now.no]) {
-                if (distances[next.no] > distances[now.no] + next.distance) {
+                if (!visited[next.no] && distances[next.no] > distances[now.no] + next.distance) {
                     distances[next.no] = distances[now.no] + next.distance;
                     pq.offer(new Node(next.no, distances[next.no]));
                 }
@@ -66,9 +70,9 @@ public class Main {
         StringBuilder sb = new StringBuilder();
         for (int i = 1; i < distances.length; i++) { //0번 인덱스 제거 기억하기
             if (distances[i] == Integer.MAX_VALUE) {
-                sb.append(INF + NEW_LINE);
+                sb.append(INF).append(NEW_LINE);
             } else {
-                sb.append(distances[i] + NEW_LINE);
+                sb.append(distances[i]).append(NEW_LINE);
             }
         }
 
