@@ -6,6 +6,7 @@ import static java.util.Comparator.*;
 public class Main {
 
     public static final String NEW_LINE = "\n";
+    public static final String INF = "INF";
 
     static class Node {
         int no;
@@ -61,15 +62,17 @@ public class Main {
                 }
             }
         }
-        
+
+        StringBuilder sb = new StringBuilder();
         for (int i = 1; i < distances.length; i++) { //0번 인덱스 제거 기억하기
             if (distances[i] == Integer.MAX_VALUE) {
-                bw.write("INF" + NEW_LINE);
+                sb.append(INF + NEW_LINE);
             } else {
-                bw.write(distances[i] + NEW_LINE);
+                sb.append(distances[i] + NEW_LINE);
             }
         }
-        
+
+        bw.write(sb.toString());
         bw.flush();
         bw.close();
     }
