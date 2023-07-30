@@ -59,8 +59,8 @@ public class Main {
     private static int dijkstra(int start, int end) {
         Arrays.fill(d, Integer.MAX_VALUE);
         d[start] = 0;
-//        boolean[] visited = new boolean[N + 1];
-//        visited[start] = true;
+        boolean[] visited = new boolean[N + 1];
+        visited[start] = true;
 
         PriorityQueue<Node> pq = new PriorityQueue<>(comparingInt(Node::getDist));
         pq.offer(new Node(start, 0));
@@ -68,7 +68,7 @@ public class Main {
             Node now = pq.poll();
             for (Node next : graph[now.no]){
                 if (d[next.no] > d[now.no] + next.dist) {
-//                    visited[next.no] = true;
+                    visited[next.no] = true;
                     d[next.no] = d[now.no] + next.dist;
                     pq.offer(new Node(next.no, d[next.no]));
                 }
