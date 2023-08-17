@@ -4,37 +4,38 @@ import java.io.InputStreamReader;
 import java.util.StringTokenizer;
 
 public class Main {
+
+    public static final String LINE_BREAK = "\n";
+
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
         StringTokenizer st = new StringTokenizer(br.readLine());
-        int numberOfToken = Integer.parseInt(st.nextToken());
-        int lineCount = Integer.parseInt(st.nextToken());
+        int N = Integer.parseInt(st.nextToken());
+        int M = Integer.parseInt(st.nextToken());
 
+        int[] sumArr = new int[N + 1];
         st = new StringTokenizer(br.readLine());
-        int[] sumArr = new int[numberOfToken + 1];
 
-        // 구간 합 배열 만들기
-        for (int i = 1; i < numberOfToken + 1; i++) {
+        // 0번째는 사용하지 않는다.
+        for (int i = 1; i < N + 1; i++) {
             sumArr[i] = sumArr[i - 1] + Integer.parseInt(st.nextToken());
         }
 
-
-        // 각각 합 계산 및 출력
-        for (int line = 0; line < lineCount; line++) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < M; i++) {
             st = new StringTokenizer(br.readLine());
-            int i = Integer.parseInt(st.nextToken()) - 1;
-            int j = Integer.parseInt(st.nextToken());
 
-            System.out.println(sumArr[j] - sumArr[i]);
+            int start = Integer.parseInt(st.nextToken());
+            int end = Integer.parseInt(st.nextToken());
+
+            if (start == 0) {
+                sb.append(sumArr[end]).append(LINE_BREAK);
+            } else {
+                sb.append(sumArr[end] - sumArr[start - 1]).append(LINE_BREAK);
+            }
         }
+
+        System.out.print(sb.toString());
     }
 }
-
-/**
- *   5 4 3 2 1
- * 0 5 9 12 14 15
- *
- * 1,3 -> 12 - 0
- * 2,3 -> 12 - 5
- * 2,5 -> 15 -5
- */
