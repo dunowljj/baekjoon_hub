@@ -56,6 +56,8 @@ public class Main {
         pq.offer(new Node(start, 0));
         while (!pq.isEmpty()) {
             Node now = pq.poll();
+            
+            if (now.distance > distances[now.no]) continue;
 
             visited[now.no] = true;
 
