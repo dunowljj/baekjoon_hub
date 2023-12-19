@@ -10,12 +10,10 @@ class Solution {
     }
     
     private int getMaxMonsterKind(int[] nums) {
-        Map<Integer, Integer> map = new HashMap<>();
-        for (int num : nums) {
-            map.put(num, map.getOrDefault(num, 0) + 1);
-        }
-        
-        return map.size();
+        return Arrays.stream(nums)
+            .boxed()
+            .collect(Collectors.toSet())
+            .size();
     }
 }
 
@@ -23,7 +21,5 @@ class Solution {
 3, 1, 2 ,3 
 가장 많은 종류의 폰켓몬을 선택하는 방법일때 종류의 개수
 
-Map으로 종합하고, 개수가 최댓값.
-
-
+Set으로 종합하고, 개수가 최댓값이다.
 **/
