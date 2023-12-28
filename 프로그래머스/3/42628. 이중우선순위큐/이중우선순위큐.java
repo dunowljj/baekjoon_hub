@@ -13,16 +13,19 @@ class Solution {
 
             if (operation.startsWith("I")) {
                 treeSet.add(num);
+                continue;
             }
 
             // 최솟값 삭제
-            else if (!treeSet.isEmpty() && operation.startsWith("D -")) {
+            if (!treeSet.isEmpty() && operation.startsWith("D -1")) {
                 treeSet.remove(treeSet.first());
+                continue;
             }
 
             // 최댓값 삭제
-            else if (!treeSet.isEmpty() && operation.startsWith("D")) {
+            if (!treeSet.isEmpty() && operation.startsWith("D 1")) {
                 treeSet.remove(treeSet.last());
+                continue;
             }
         }
 
