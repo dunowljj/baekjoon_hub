@@ -9,10 +9,15 @@ class Solution {
 
         int hIndex = 0;
         for (int i = 0; i < n; i++) {   
-            int h = citations[i];
+            int citationCount = citations[i];
             int upperCount = n - i;
 
-            int temp = Math.min(h, upperCount);
+            // // 이렇게 하면 중간에 값이 반영안된다.
+            // if (citationCount <= upperCount) {
+            //     hIndex = Math.max(h, citationCount);   
+            // }
+            
+            int temp = Math.min(citationCount, upperCount);
             hIndex = Math.max(temp, hIndex);
         }
 
