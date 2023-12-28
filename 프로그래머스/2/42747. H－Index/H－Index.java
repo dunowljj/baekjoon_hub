@@ -4,19 +4,18 @@ import java.util.stream.IntStream;
 class Solution {
 
     public int solution(int[] citations) {
-        int count = citations.length;
+        int n = citations.length;
         Arrays.sort(citations);
 
-        int maxH = 0;
-        for (int i = 0; i < count; i++) {
-            int candidate = citations[i];
-            int upperCount = count - i;
-            
-            if (candidate >= upperCount) {
-                return upperCount;
-            }
+        int hIndex = 0;
+        for (int i = 0; i < n; i++) {   
+            int h = citations[i];
+            int upperCount = n - i;
+
+            int temp = Math.min(h, upperCount);
+            hIndex = Math.max(temp, hIndex);
         }
-            
-        return maxH;
+
+        return hIndex;
     }
 }
