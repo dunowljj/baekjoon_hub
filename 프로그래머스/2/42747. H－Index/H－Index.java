@@ -1,5 +1,4 @@
 import java.util.Arrays;
-import java.util.stream.IntStream;
 
 class Solution {
 
@@ -8,19 +7,18 @@ class Solution {
         Arrays.sort(citations);
 
         int hIndex = 0;
-        for (int i = 0; i < n; i++) {   
-            int citationCount = citations[i];
+        for (int i = 0; i < n; i++) {
+            int quoteCount = citations[i];
             int upperCount = n - i;
 
-            // // 이렇게 하면 중간에 값이 반영안된다.
-            // if (citationCount <= upperCount) {
-            //     hIndex = Math.max(h, citationCount);   
-            // }
-            
-            int temp = Math.min(citationCount, upperCount);
+            int temp = Math.min(quoteCount, upperCount);
             hIndex = Math.max(temp, hIndex);
         }
-
         return hIndex;
     }
 }
+
+// 이렇게 검사하면 하면 배열에 있는 값이 무조건 h-index가 된다.
+// if (quote <= upperCount) {
+// hIndex = Math.max(hIndex, quote);
+// }
