@@ -2,7 +2,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Solution {
-       
+    public static final int MAX_TOWER_COUNT = 100;
     private int wireCount;
 
     public int solution(int n, int[][] wires) {
@@ -11,7 +11,6 @@ public class Solution {
         for (int excludeNo = 0; excludeNo < wireCount; excludeNo++) {
             int count = count(wireCount, wires, excludeNo);
 
-            if (count == 0 || n - count == 0) continue;
             int diff = Math.abs((n - count) - count);
             answer = Math.min(answer, diff);
         }
@@ -20,9 +19,9 @@ public class Solution {
     }
 
     private int count(int wireCount, int[][] wires, int exclude) {
-        List<Integer>[] adjList = new ArrayList[101];
+        List<Integer>[] adjList = new ArrayList[MAX_TOWER_COUNT + 1];
 
-        for (int i = 0; i < 101; i++) {
+        for (int i = 0; i <= MAX_TOWER_COUNT; i++) {
             adjList[i] = new ArrayList<>();
         }
 
@@ -35,8 +34,8 @@ public class Solution {
             adjList[a].add(b);
             adjList[b].add(a);
         }
-
-        boolean[] visited = new boolean[101];
+        
+        boolean[] visited = new boolean[MAX_TOWER_COUNT + 1];
         visited[wires[0][0]] = true;
         return count(adjList, visited, wires[0][0]);
     }
@@ -54,5 +53,3 @@ public class Solution {
         return count;
     }
 }
-/**
- */
