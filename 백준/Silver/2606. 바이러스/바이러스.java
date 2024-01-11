@@ -1,55 +1,52 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.StringTokenizer;
+import java.util.*;
 
 public class Main {
-    private final static int[][] mapper = {{1, -1, 0, 0}, {0, 0, 1, -1}};
-    private static int answer = 0;
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st;
 
         int numOfComputer = Integer.parseInt(br.readLine());
-        int numOfPair = Integer.parseInt(br.readLine());
+        int numOfEdge = Integer.parseInt(br.readLine());
 
-        List<Integer>[] graph = new ArrayList[numOfComputer + 1];
-        boolean[] visited = new boolean[numOfComputer + 1];
-
-        for (int i = 1; i <= numOfComputer; i++) {
-            graph[i] = new ArrayList<>();
+        List<Integer>[] network = new ArrayList[numOfComputer + 1]; // 컴퓨터 번호는 1번부터 차례로
+        for (int i = 0; i < network.length; i++) {
+            network[i] = new ArrayList<>();
         }
 
-        for (int i = 0; i < numOfPair; i++) {
-            st = new StringTokenizer(br.readLine());
-            int c1 = Integer.parseInt(st.nextToken());
-            int c2 = Integer.parseInt(st.nextToken());
+        for (int i = 0; i < numOfEdge; i++) {
+            StringTokenizer st = new StringTokenizer(br.readLine());
+            int a = Integer.parseInt(st.nextToken());
+            int b = Integer.parseInt(st.nextToken());
 
-            graph[c1].add(c2);
-            graph[c2].add(c1);
+            network[a].add(b);
+            network[b].add(a);
         }
 
-        visited[1] = true;
-        countInfected(graph, visited, 1);
-
-        System.out.print(answer);
+        System.out.print(bfs(1, numOfComputer, network));
     }
 
-    private static void countInfected(List<Integer>[] graph, boolean[] visited, int start) {
-        for (int next : graph[start]) {
-            if (!visited[next]) {
-                visited[next] = true;
-                answer++;
-                countInfected(graph, visited, next);
+    private static int bfs(int start, int n, List<Integer>[] network) {
+        Queue<Integer> queue = new LinkedList<>();
+        boolean[] visited = new boolean[n + 1];
+        visited[start] = true;
+        queue.offer(start);
+
+        int count = 0; //1번 미포함 카운트
+        while (!queue.isEmpty()) {
+            int now = queue.poll();
+
+            for (int next : network[now]) {
+                if (!visited[next]) {
+                    visited[next] = true;
+                    queue.offer(next);
+                    count++;
+                }
             }
         }
+
+        return count;
     }
 }
-
-/*
-노드 연결
-
- */
