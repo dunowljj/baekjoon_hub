@@ -6,6 +6,9 @@ import java.util.*;
 import static java.util.Comparator.*;
 
 public class Main {
+
+    private static int[] rank;
+
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
@@ -16,11 +19,7 @@ public class Main {
 
         String[] schoolTypes = br.readLine().split(" ");
 
-//        List<Integer>[] adjList = new ArrayList[schoolCount + 1];
-//        for (int i = 0; i < adjList.length; i++) {
-//            adjList[i] = new ArrayList<>();
-//        }
-
+        rank = new int[schoolCount + 1];
         int[] parent = new int[schoolCount + 1];
         for (int i = 0; i <= schoolCount; i++) {
             parent[i] = i;
@@ -37,7 +36,7 @@ public class Main {
 
             // 같은 계열 학교면 연결하지 않는다.
             if (schoolTypes[u - 1].equals(schoolTypes[v - 1])) continue;
-            
+
             pq.offer(new Edge(u, v, d));
         }
 
@@ -65,19 +64,29 @@ public class Main {
         return findParent(parent, now.start) == findParent(parent, now.end);
     }
 
+    // 경로 압축 추가
     public static int findParent(int[] parent, int no) {
-        if (parent[no] == no) return no;
-        else return findParent(parent, parent[no]);
+        if (parent[no] == no) {
+            return no;
+        }
+
+        return parent[no] = findParent(parent, parent[no]);
     }
 
+    // 랭크 병합 추가
     public static void union(int[] parent, int no1, int no2) {
         int p1 = findParent(parent, no1);
         int p2 = findParent(parent, no2);
 
-        if (p1 < p2) {
-            parent[p2] = p1;
-        } else {
-            parent[p1] = p2;
+        if (p1 != p2) {
+            if (rank[p1] > rank[p2]) {
+                parent[p2] = p1;
+            } else if (rank[p1] < rank[p2]) {
+                parent[p1] = p2;
+            } else {
+                parent[p2] = p1;
+                rank[p1]++;
+            }
         }
     }
 
@@ -97,3 +106,9 @@ public class Main {
         }
     }
 }
+
+/**
+* 경로 압축과 랭크 병합을 통해 트리의 균형을 어느정도 유지 가능하다.
+* union 연산과 find 연산에 두 방식을 추가하니 실행시간이 조금 단축되었다.
+* 만약에 트리가 높이만 증가하여 길게 연결되면 파인드 연산의 시간 복잡도가 O(V)에 이를 수 있다.
+*/
