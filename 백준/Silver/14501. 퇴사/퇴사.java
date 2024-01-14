@@ -11,32 +11,29 @@ public class Main {
         int N = Integer.parseInt(br.readLine());
         StringTokenizer st;
 
-        int[] memo = new int[N + 1];
+        int[] dp = new int[N + 1]; // 다음 요소에 dp값을 갱신해서 이렇게 해놈
         List<Counsel> counsels = new ArrayList<>();
         for (int i = 0; i < N; i++) {
             st = new StringTokenizer(br.readLine());
             counsels.add(new Counsel(st.nextToken(), st.nextToken()));
         }
 
+        // [0,0]
         // 다음 칸에다가 최댓값 갱신하기
         for (int idx = 0; idx < N; idx++) {
             Counsel now = counsels.get(idx);
             int counselFinishIdx = idx + now.time - 1;
 
-            if (counselFinishIdx < N && memo[counselFinishIdx + 1] < memo[idx] + now.pay) {
-                memo[counselFinishIdx + 1] = memo[idx] + now.pay;
+            if (counselFinishIdx < N && dp[counselFinishIdx + 1] < dp[idx] + now.pay) {
+                dp[counselFinishIdx + 1] = dp[idx] + now.pay;
             }
 
-            memo[idx + 1] = Math.max(memo[idx], memo[idx + 1]);
+            // 이 줄을 추가하지 않으면, 상담이 종료된 다음 시점에만 금액이 갱신된다.
+            dp[idx + 1] = Math.max(dp[idx], dp[idx + 1]);
         }
 
-        int max = 0;
-        for (int i = 0; i < memo.length; i++) {
-            max = Math.max(memo[i], max);
-        }
-
-        System.out.print(max);
-
+        // 굳이 전체 dp 배열을 순회할 필요 없이 마지막 값만 확인하면 된다.
+        System.out.print(dp[N]);
     }
     
     static class Counsel {
