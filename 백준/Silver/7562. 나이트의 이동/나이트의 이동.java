@@ -1,77 +1,89 @@
-import java.io.*;
+import java.awt.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.StringTokenizer;
 
 public class Main {
-    static int[] nightMoveMapX = {1,1,-1,-1,2,-2,2,-2};
-    static int[] nightMoveMapY = {2,-2,2,-2,1,1,-1,-1};
-    static int tx;
-    static int ty;
-    static boolean[][] visited;
-    static StringBuilder answer = new StringBuilder();
+    public static final int[][] mapper = {
+            {2, -2, 1, -1, 2, -2, 1, -1},
+            {-1, -1, -2, -2, 1, 1, 2, 2}
+    };
+
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
         StringTokenizer st;
+        int N = Integer.parseInt(br.readLine());
 
-        int caseNum = Integer.parseInt(br.readLine());
+        for (int i = 0; i < N; i++) {
+            int l = Integer.parseInt(br.readLine());
 
-        for (int i = 0; i < caseNum; i++) {
-            int I = Integer.parseInt(br.readLine());
+            Point start = new Point(br.readLine());
+            Point end = new Point(br.readLine());
 
-            visited = new boolean[I][I];
-
-            st = new StringTokenizer(br.readLine());
-            int x = Integer.parseInt(st.nextToken());
-            int y = Integer.parseInt(st.nextToken());
-
-            st = new StringTokenizer(br.readLine());
-            tx = Integer.parseInt(st.nextToken());
-            ty = Integer.parseInt(st.nextToken());
-
-            bfs(I, x, y, 0);
+            System.out.println(bfs(start, end, l));
         }
-
-        bw.write(answer.toString().trim());
-        bw.flush();
-        bw.close();
     }
 
-    static void bfs(int I, int x, int y, int d) {
-        Queue<int[]> queue = new LinkedList();
-        queue.add(new int[]{x, y, d});
+    private static int bfs(Point start, Point end, int l) {
+        boolean[][] visited = new boolean[l][l];
+        Queue<Point> queue = new LinkedList<>();
 
+        visited[start.y][start.x] = true;
+        queue.offer(start);
+
+        int move = -1; // 처음 위치는 움직임이 없는 상태이기때문에 0으로 만들기위해 -1로 초기화
         while (!queue.isEmpty()) {
-            int[] curr = queue.poll();
-            x = curr[0];
-            y = curr[1];
-            d = curr[2];
+            int size = queue.size();
+            move++;
 
-            if (x == tx && y == ty) {
-                answer.append(d).append("\n");
-                return;
-            }
+            for (int i = 0; i < size; i++) {
+                Point now = queue.poll();
 
-            for (int i = 0; i < 8; i++) {
-                int nx = x + nightMoveMapX[i];
-                int ny = y + nightMoveMapY[i];
-                int nd = d + 1;
+                if (now.equals(end)) return move;
 
-                if (nx < 0 || nx >= I || ny < 0 || ny >= I) {
-                    continue;
-                }
+                for (int k = 0; k < 8; k++) {
+                    int ny = now.y + mapper[0][k];
+                    int nx = now.x + mapper[1][k];
 
-                if (!visited[nx][ny]) {
-                    queue.add(new int[]{nx, ny, nd});
-                    visited[nx][ny] = true;
+                    if (ny >= l || ny < 0 || nx >= l || nx < 0 || visited[ny][nx]) continue;
+
+                    queue.offer(new Point(ny, nx));
+                    visited[ny][nx] = true;
                 }
             }
+        }
+
+        return move;
+    }
+
+    static class Point {
+        int y;
+        int x;
+
+        public Point(int y, int x) {
+            this.y = y;
+            this.x = x;
+        }
+
+        public Point(String location) {
+            String[] yx = location.split(" ");
+            this.y = Integer.parseInt(yx[0]);
+            this.x = Integer.parseInt(yx[1]);
+        }
+
+        @Override
+        public boolean equals(Object p) {
+            return this.y == ((Point) p).y && this.x == ((Point) p).x;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = y;
+            result = 31 * result + x;
+            return result;
         }
     }
 }
-/*
-체스판 배열이 꼭 필요한가? yes -> 개수 세기?.. -> 체스판 없이 I 길이만 사용하고, 배열에 깊이를 저장
-각칸을 두수의 쌍 0 ~ l-1 ->  배열 인덱스와 같다.
-
- */
