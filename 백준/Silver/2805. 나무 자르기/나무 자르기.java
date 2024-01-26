@@ -13,14 +13,17 @@ public class Main {
 
         long[] heights = new long[N];
         st = new StringTokenizer(br.readLine());
+        long max = 0;
         for (int i = 0; i < N; i++) {
             long height = Long.parseLong(st.nextToken());
             heights[i] = height;
+
+            max = Math.max(max, height);
         }
 
         // T T T T F F F
         long lo = 0L;
-        long hi = 2_000_000_001L;
+        long hi = max + 1;
 
         while (lo + 1 < hi) {
             long mid = (lo + hi) / 2L;
@@ -32,7 +35,7 @@ public class Main {
             }
         }
 
-        System.out.print(lo);
+        System.out.println(lo);
     }
 
     private static boolean satisfied(long cutHeight, long[] heights, long needHeight) {
