@@ -1,69 +1,46 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.StringTokenizer;
 
 public class Main {
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        int N = Integer.parseInt(br.readLine()); // 3 ~ 10,000
+        int N = Integer.parseInt(br.readLine());
 
+        int[] budgets = new int[N];
         StringTokenizer st = new StringTokenizer(br.readLine());
-        List<Integer> budgetRequests = new ArrayList<>();
-        int requestSum = 0;
+        int max = 0;
         for (int i = 0; i < N; i++) {
-            int budgetRequest = Integer.parseInt(st.nextToken());
-            budgetRequests.add(budgetRequest);
-            requestSum += budgetRequest;
+            int budget = Integer.parseInt(st.nextToken());
+            budgets[i] = budget;
+
+            max = Math.max(budget, max);
         }
 
         int totalBudget = Integer.parseInt(br.readLine());
 
-        int answer = 0;
+        int lo = 0;
+        int hi = max + 1;
 
-        if (totalBudget >= requestSum) {
-           answer = getMax(budgetRequests);
-        } else {
-            answer =  binarySearch(budgetRequests, totalBudget);
-        }
+        // T T T F F
+        while (lo + 1 < hi) {
+            int mid = (lo + hi) / 2;
 
-        System.out.print(answer);
-    }
-
-    private static int getMax(List<Integer> budgetRequests) {
-        int max = 0;
-        for (Integer budgetRequest : budgetRequests) {
-            max = Math.max(max, budgetRequest);
-        }
-
-        return max;
-    }
-
-    private static int binarySearch(List<Integer> budgetRequests, int totalBudget) {
-        // T T T T T F F F F
-        int low = 1;
-        int high = 100_000;
-
-        while (low + 1 < high) {
-
-            int mid = (low + high) / 2;
-
-            if (canAssign(mid, budgetRequests, totalBudget)) {
-                low = mid;
+            if (canAllocate(budgets, mid, totalBudget)) {
+                lo = mid;
             } else {
-                high = mid;
+                hi = mid;
             }
         }
 
-        return low;
+        System.out.print(lo);
     }
 
-    private static boolean canAssign(int upperBound, List<Integer> budgetRequests, int totalBudget) {
+    private static boolean canAllocate(int[] budgets, int upperBound, int totalBudget) {
         int sum = 0;
-        for (Integer budgetRequest : budgetRequests) {
-            sum += Math.min(budgetRequest, upperBound);
+        for (int budget : budgets) {
+            sum += Math.min(budget, upperBound);
         }
 
         return totalBudget >= sum;
