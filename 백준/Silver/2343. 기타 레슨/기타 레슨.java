@@ -34,7 +34,7 @@ public class Main {
         while (lo + 1 < hi) {
             int mid = (lo + hi) / 2;
 
-            if (canBeSplittedMoreThan(M, lenMax, mid, playTimes)) {
+            if (canBeSplittedMoreThan(M, mid, playTimes)) {
                 lo = mid;
             } else {
                 hi = mid;
@@ -45,9 +45,7 @@ public class Main {
         System.out.print(hi);
     }
 
-    private static boolean canBeSplittedMoreThan(int m, int lenMax, int lenLimit, int[] playTimes) {
-//        if (lenLimit < lenMax) return false;
-
+    private static boolean canBeSplittedMoreThan(int m, int lenLimit, int[] playTimes) {
         int splitCount = 1; //처리가 안되는 마지막 부분의 분할 미리 추가
         int len = 0;
         for (int playTime : playTimes) {
