@@ -1,34 +1,21 @@
-import java.io.*;
+import javax.management.remote.rmi.RMIJRMPServerImpl;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.*;
 
 public class Main {
-    static class Node {
-        long weight;
-        int vertex;
-
-        public Node(long weight, int vertex) {
-            this.weight = weight;
-            this.vertex = vertex;
-        }
-
-        public long getWeight() {
-            return weight;
-        }
-    }
-    static List<Node>[] graph;
-    static boolean[] visited;
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-
         StringTokenizer st = new StringTokenizer(br.readLine());
+
         int V = Integer.parseInt(st.nextToken());
         int E = Integer.parseInt(st.nextToken());
 
-        graph = new ArrayList[V + 1];
-
-        for (int i = 0; i < V + 1; i++) {
-            graph[i] = new ArrayList<>();
+        List<Edge>[] adjList = new ArrayList[V + 1];
+        for (int i = 0; i < adjList.length; i++) {
+            adjList[i] = new ArrayList<>();
         }
 
         for (int i = 0; i < E; i++) {
@@ -37,32 +24,42 @@ public class Main {
             int B = Integer.parseInt(st.nextToken());
             int C = Integer.parseInt(st.nextToken());
 
-            graph[A].add(new Node(C, B));
-            graph[B].add(new Node(C, A));
+            adjList[A].add(new Edge(B, C));
+            adjList[B].add(new Edge(A, C));
         }
 
-        visited = new boolean[V + 1];
-        long total = 0L;
+        boolean[] visited = new boolean[V + 1];
+        PriorityQueue<Edge> pq = new PriorityQueue<>(Comparator.comparingLong(Edge::getWeight));
+        pq.offer(new Edge(1, 0));
 
-        PriorityQueue<Node> pq = new PriorityQueue<>(Comparator.comparingLong(Node::getWeight));
-        pq.offer(new Node(0L, 1));
-
+        long minCost = 0;
         while (!pq.isEmpty()) {
-            Node now = pq.poll();
+            Edge now = pq.poll();
+            if (visited[now.end]) continue;
+            visited[now.end] = true;
+            minCost += now.weight;
 
-            if (visited[now.vertex]) continue;
-            visited[now.vertex] = true;
-
-            total += now.weight;
-
-            List<Node> nexts = graph[now.vertex];
-
-            for (int i = 0; i < nexts.size(); i++) {
-                Node next = nexts.get(i);
-                pq.offer(new Node(next.weight, next.vertex));
+            for (Edge next : adjList[now.end]) {
+                if (!visited[next.end]) {
+                    pq.offer(next);
+                }
             }
         }
 
-        System.out.print(total);
+        System.out.print(minCost);
+    }
+
+    static class Edge {
+        int end;
+        long weight;
+
+        public Edge(int end, int weight) {
+            this.end = end;
+            this.weight = weight;
+        }
+
+        public long getWeight() {
+            return weight;
+        }
     }
 }
