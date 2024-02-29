@@ -6,70 +6,63 @@ import java.util.*;
 import static java.util.Comparator.*;
 
 public class Main {
-
-    static class Node {
-        int weight;
-        int houseNo;
-
-        public Node(int weight, int houseNo) {
-            this.weight = weight;
-            this.houseNo = houseNo;
-        }
-
-        public int getWeight() {
-            return weight;
-        }
-    }
-
-    static List<Node>[] graph;
-    static boolean[] visited;
-
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
-
         int N = Integer.parseInt(st.nextToken());
         int M = Integer.parseInt(st.nextToken());
 
-        graph = new ArrayList[N + 1];
-        visited = new boolean[N + 1];
-        for (int i = 0; i < N + 1; i++) graph[i] = new ArrayList<>();
+
+        List<Edge>[] adjList = new ArrayList[N + 1];
+        for (int i = 0; i < adjList.length; i++) {
+            adjList[i] = new ArrayList<>();
+        }
 
         for (int i = 0; i < M; i++) {
             st = new StringTokenizer(br.readLine());
-            int A = Integer.parseInt(st.nextToken());
-            int B = Integer.parseInt(st.nextToken());
-            int C = Integer.parseInt(st.nextToken());
+            int a = Integer.parseInt(st.nextToken());
+            int b = Integer.parseInt(st.nextToken());
+            int c = Integer.parseInt(st.nextToken());
 
-            graph[A].add(new Node(C, B));
-            graph[B].add(new Node(C, A));
+            adjList[a].add(new Edge(b, c));
+            adjList[b].add(new Edge(a, c));
         }
 
-        int sum = 0;
-        int max = Integer.MIN_VALUE;
-        PriorityQueue<Node> pq = new PriorityQueue<>(comparingInt(Node::getWeight));
-        pq.offer(new Node(0, 2));
+        boolean[] visited = new boolean[N + 1];
+        PriorityQueue<Edge> pq = new PriorityQueue<>(comparingInt(Edge::getCost));
+        pq.offer(new Edge(1, 0));
 
+        int maxCost = Integer.MIN_VALUE;
+        int totalCost = 0;
         while (!pq.isEmpty()) {
-            Node now = pq.poll();
+            Edge now = pq.poll();
+            if (visited[now.end]) continue;
+            visited[now.end] = true;
 
-            if (visited[now.houseNo]) continue;
+            maxCost = Math.max(maxCost, now.cost);
+            totalCost += now.cost;
 
-            visited[now.houseNo] = true;
-            sum += now.weight;
-            max = Math.max(now.weight, max);
-
-            for (Node next : graph[now.houseNo]) {
-                pq.offer(new Node(next.weight, next.houseNo));
+            for (Edge next : adjList[now.end]) {
+                if (!visited[next.end]) {
+                    pq.offer(next);
+                }
             }
         }
 
-        System.out.println(sum - max);
+        System.out.print(totalCost - maxCost);
+    }
+
+    static class Edge {
+        int end;
+        int cost;
+
+        public Edge(int end, int cost) {
+            this.end = end;
+            this.cost = cost;
+        }
+
+        public int getCost() {
+            return cost;
+        }
     }
 }
-
-/**
- * 양방향
- * 길 유지비
- * 임의의 두 집 사이 경로가 항상 존재
- */
