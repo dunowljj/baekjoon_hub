@@ -1,94 +1,179 @@
-import javax.swing.*;
+/**
+ * kruskal
+ */
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.nio.BufferOverflowException;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.StringTokenizer;
+import java.util.*;
+
+import static java.util.Comparator.*;
 
 public class Main {
-
-    private static int[] parent;
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st;
 
-        String input;
-        while (!(input = br.readLine()).isBlank() && !input.startsWith("0 0")) {
+        while (true) {
+            st = new StringTokenizer(br.readLine());
 
-            int m = Integer.parseInt(input.split(" ")[0]); // 길의 수
-            int n = Integer.parseInt(input.split(" ")[1]); // 집의 수
+            int houseCount = Integer.parseInt(st.nextToken());
+            int roadCount = Integer.parseInt(st.nextToken());
 
-            parent = new int[m];
+            if (houseCount == 0 && roadCount == 0) break;
+
+            int[] parent = new int[houseCount + 1];
+            int[] rank = new int[houseCount + 1];
             for (int i = 0; i < parent.length; i++) {
                 parent[i] = i;
             }
 
-
-            int totalLen = 0;
-            int minLen = 0;
-            int[][] inputs = new int[n][3];
-            for (int i = 0; i < n; i++) {
+            PriorityQueue<Road> pq = new PriorityQueue<>(comparingInt(Road::getLen));
+            int lenTotal = 0;
+            for (int i = 0; i < roadCount; i++) {
                 st = new StringTokenizer(br.readLine());
-                inputs[i][0] = Integer.parseInt(st.nextToken());
-                inputs[i][1] = Integer.parseInt(st.nextToken());
-                inputs[i][2] = Integer.parseInt(st.nextToken());
-                totalLen += inputs[i][2];
+                int x = Integer.parseInt(st.nextToken());
+                int y = Integer.parseInt(st.nextToken());
+                int z = Integer.parseInt(st.nextToken());
+
+                lenTotal += z;
+                pq.offer(new Road(x, y, z));
             }
 
-            Arrays.sort(inputs, Comparator.comparingInt(i -> i[2]));
+            int lenSum = 0;
+            while (!pq.isEmpty()) {
+                Road now = pq.poll();
 
-            for (int i = 0; i < n; i++) {
-                int x = inputs[i][0];
-                int y = inputs[i][1];
-                int len = inputs[i][2];
+                if (houseCount == 0) break;
 
-                if (isConnected(x, y)) continue;
-
-                union(x, y);
-                minLen += len;
+                if (find(parent, now.start) != find(parent, now.end)) {
+                    lenSum += now.len;
+                    union(parent, rank, now.start, now.end);
+                    houseCount--;
+                }
             }
 
-            System.out.println((totalLen - minLen));
+            System.out.println(lenTotal - lenSum);
         }
     }
 
-    private static boolean isConnected(int x, int y) {
-        return find(x) == find(y);
-    }
+    private static void union(int[] parent, int[] rank, int start, int end) {
+        int p1 = find(parent, start);
+        int p2 = find(parent, end);
 
-    private static void union(int x, int y) {
-        int px = find(x);
-        int py = find(y);
-
-        if (px < py) {
-            parent[py] = px;
-        } else {
-            parent[px] = py;
+        if (p1 != p2) {
+            if (rank[p1] > rank[p2]) {
+                parent[p2] = p1;
+            } else if (rank[p1] < rank[p2]) {
+                parent[p1] = p2;
+            } else {
+                rank[p1] ++;
+                parent[p2] = p1;
+            }
         }
     }
 
-    private static int find(int x) {
+    private static int find(int[] parent, int x) {
         if (parent[x] == x) return x;
-        return find(parent[x]);
+        else return parent[x] = find(parent, parent[x]);
+    }
+
+    static class Road {
+        int start;
+        int end;
+        int len;
+
+        public Road(int start, int end, int len) {
+            this.start = start;
+            this.end = end;
+            this.len = len;
+        }
+
+        public int getLen() {
+            return len;
+        }
     }
 }
 
+/**
+ * prim
+ */
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.*;
 
-/*8
-7 11
-0 1 7
-0 3 5
-1 2 8
-1 3 9
-1 4 7
-2 4 5
-3 4 15
-3 5 6
-4 5 8
-4 6 9
-5 6 11
-0 0
+import static java.util.Comparator.*;
+
+public class Main {
+
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st;
+
+        while (true) {
+            st = new StringTokenizer(br.readLine());
+
+            int houseCount = Integer.parseInt(st.nextToken());
+            int roadCount = Integer.parseInt(st.nextToken());
+
+            if (houseCount == 0 && roadCount == 0) break;
+
+            List<Road>[] city = new ArrayList[houseCount + 1];
+            for (int i = 0; i < city.length; i++) {
+                city[i] = new ArrayList<>();
+            }
+
+            int totalPrice = 0;
+            for (int i = 0; i < roadCount; i++) {
+                st = new StringTokenizer(br.readLine());
+                int x = Integer.parseInt(st.nextToken());
+                int y = Integer.parseInt(st.nextToken());
+                int z = Integer.parseInt(st.nextToken());
+
+                city[x].add(new Road(y, z));
+                city[y].add(new Road(x, z));
+                totalPrice += z;
+            }
+
+            boolean[] visited = new boolean[houseCount + 1];
+            PriorityQueue<Road> pq = new PriorityQueue<>(comparingInt(Road::getLen));
+            pq.offer(new Road(1, 0));
+
+            int lenSum = 0;
+            while (!pq.isEmpty()) {
+                Road now = pq.poll();
+                if (visited[now.end]) continue;
+
+                visited[now.end] = true;
+                lenSum += now.len;
+
+                for (Road next : city[now.end]) {
+                    if (!visited[next.end]) {
+                        pq.offer(next);
+                    }
+                }
+            }
+
+            System.out.println(totalPrice - lenSum);
+        }
+    }
+
+    static class Road {
+        int end;
+        int len;
+
+        public Road(int end, int len) {
+            this.end = end;
+            this.len = len;
+        }
+
+        public int getLen() {
+            return len;
+        }
+    }
+}
+
+/**
+ * 도시상의 모든 길의 거리 합은 2^31미터보다 작다.
  */
