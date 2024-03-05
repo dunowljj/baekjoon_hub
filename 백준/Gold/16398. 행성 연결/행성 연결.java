@@ -2,77 +2,55 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.PriorityQueue;
+import java.util.StringTokenizer;
 
 import static java.util.Comparator.comparingInt;
 
 public class Main {
-
-    public static final String SPACE = " ";
-
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st;
 
         int N = Integer.parseInt(br.readLine());
 
-        if (N == 1) {
-            System.out.print(0);
-            System.exit(0);
-        }
+        int[][] universe = new int[N + 1][N + 1];
+        for (int i = 1; i < N + 1; i++) {
+            st = new StringTokenizer(br.readLine());
 
-        int[] parent = new int[N + 1];
-        for (int i = 0; i < N + 1; i++) {
-            parent[i] = i;
-        }
-        // 크루스칼 방식 사용시, 반절만 초기화하고 진행하면 된다.
-        PriorityQueue<Flow> pq = new PriorityQueue<>(comparingInt(Flow::getCost));
-
-        // 0행과 0열엔 빈값만 있다. -> 1행부터 탐색
-        for (int i = 0; i < N; i++) {
-            String[] split = br.readLine().split(SPACE);
-
-            // i==j 인부분 이후만 탐색, 대칭되는 부분도 무시한다.
-            for (int j = i + 1; j < N; j++) {
-                int cost = Integer.parseInt(split[j]);
-                pq.offer(new Flow(i, j, cost));
+            for (int j = 1; j < N + 1; j++) {
+                universe[i][j] = Integer.parseInt(st.nextToken());
             }
         }
 
 
+        boolean[] visited = new boolean[N + 1];
+        PriorityQueue<Flow> pq = new PriorityQueue<>(comparingInt(Flow::getCost));
+        pq.offer(new Flow(1, 0));
+
         long minCost = 0;
         while (!pq.isEmpty()) {
             Flow now = pq.poll();
+            if (visited[now.end]) continue;
 
-            if (find(parent, now.startNo) != find(parent, now.endNo)) {
-                union(parent, now.startNo, now.endNo);
-                minCost += now.cost;
+            visited[now.end] = true;
+            minCost += now.cost;
+
+            for (int i = 1; i < universe[now.end].length; i++) {
+                if (!visited[i]) {
+                    pq.offer(new Flow(i, universe[now.end][i]));
+                }
             }
         }
 
         System.out.print(minCost);
     }
 
-    private static int find(int[] parent, int no) {
-        if (parent[no] == no) return no;
-        else return parent[no] = find(parent, parent[no]);
-    }
-
-    private static void union(int[] parent, int startNo, int endNo) {
-        int p1 = find(parent, startNo);
-        int p2 = find(parent, endNo);
-
-        if (p1 != p2) {
-            parent[p2] = p1;
-        }
-    }
-
     static class Flow {
-        int startNo;
-        int endNo;
+        int end;
         int cost;
 
-        public Flow(int startNo, int endNo, int cost) {
-            this.startNo = startNo;
-            this.endNo = endNo;
+        public Flow(int end, int cost) {
+            this.end = end;
             this.cost = cost;
         }
 
