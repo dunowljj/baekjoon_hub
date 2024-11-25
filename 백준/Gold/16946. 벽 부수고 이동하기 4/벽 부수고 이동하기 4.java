@@ -1,145 +1,170 @@
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.*;
-
-class Point2 {
-    int x;
-    int y;
-
-    public Point2(int x, int y) {
-        this.x = x;
-        this.y = y;
-    }
-}
+import java.util.List;
 
 public class Main {
-    static int N;
-    static int M;
-    static int groupNum = 2;
-    static int[][] board;
-    static int[][] answerSheet;
-    static int[][] mapper = {{1, -1, 0, 0}, {0, 0, -1, 1}};
-    static Map<Integer, Integer> groups = new HashMap<>();
+
+    private static final int[][] mapper = {{0, 0, -1, 1}, {-1, 1, 0, 0}};
+    public static final int WALL = -1;
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
-
         StringTokenizer st = new StringTokenizer(br.readLine());
-        N = Integer.parseInt(st.nextToken());
-        M = Integer.parseInt(st.nextToken());
 
-        board = new int[N][M];
-        answerSheet = new int[N][M];
+        int N = Integer.parseInt(st.nextToken());
+        int M = Integer.parseInt(st.nextToken());
 
-        // 입력
-        for (int i = 0; i < N; i++) {
-            String input = br.readLine();
-            for (int j = 0; j < M; j++) {
-                board[i][j] = input.charAt(j) - '0';
-            }
-        }
+        Space[][] spaces = new Space[N][M];
 
-        // 정답지로 쓸것 따로 복사 (0인 상태)
-        for (int i = 0; i < board.length; i++) {
-            System.arraycopy(board[i], 0, answerSheet[i], 0, board[i].length);
-        }
-
-        for (int i = 0; i < N; i++) {
-            for (int j = 0; j < M; j++) {
-                if (board[i][j] == 0) {
-                    grouping(i, j);
+        for (int y = 0; y < N; y++) {
+            String row = br.readLine();
+            for (int x = 0; x < M; x++) {
+                if (row.charAt(x) == '1') {
+                    spaces[y][x] = new Space(true, -1);
+                } else {
+                    spaces[y][x] = new Space(false, -1);
                 }
             }
         }
 
-        for (int i = 0; i < N; i++) {
-            for (int j = 0; j < M; j++) {
-                if (board[i][j] == 1) {
-                    searchAround(i,j);
+        // 근접한 0을 모두 센 count값으로 해당 0들이 있는 모든 칸을 채워준다.
+        // 같은 그룹인지도 체크해야 한다...
+        int groupNo = 0;
+        List<Integer> groupSize = new ArrayList<>();
+        boolean[][] visited = new boolean[spaces.length][spaces[0].length];
+        for (int y = 0; y < spaces.length; y++) {
+            for (int x = 0; x < spaces[y].length; x++) {
+                if (!spaces[y][x].isWall && !visited[y][x]) {
+                    spaces[y][x] = countZeroByBFS(y, x, visited, spaces, groupNo, groupSize);
+                    groupNo++;
                 }
             }
         }
+//        printCount(spaces, groupSize);
+//        printGroupNo(spaces);
 
-
-        for (int i = 0; i < N; i++) {
-            for (int j = 0; j < M; j++) {
-                bw.write(answerSheet[i][j]+"");
+        StringBuilder sb = new StringBuilder();
+        for (int y = 0; y < spaces.length; y++) {
+            for (int x = 0; x < spaces[y].length; x++) {
+                if (spaces[y][x].isWall) {
+                    sb.append(getCount(y, x, spaces, groupSize) % 10);
+                } else {
+                    sb.append(0);
+                }
             }
-            bw.write("\n");
+            sb.append(System.lineSeparator());
         }
 
-
-        bw.flush();
-        bw.close();
+        System.out.println(sb.toString().trim());
     }
 
-    private static void grouping(int i, int j) {
-        Queue<Point2> queue = new LinkedList<>();
-        queue.add(new Point2(i, j));
-        board[i][j] = groupNum;
+    private static Space countZeroByBFS(int i, int j, boolean[][] visited, Space[][] spaces, int groupNo, List<Integer> groupSize) {
+        visited[i][j] = true;
+
+        Queue<Point> queue = new LinkedList<>();
+        Point start = new Point(i, j);
+
+        queue.offer(start);
+        spaces[i][j].groupNo = groupNo;
 
         int count = 1;
         while (!queue.isEmpty()) {
-            Point2 point = queue.poll();
+            Point now = queue.poll();
 
             for (int k = 0; k < 4; k++) {
-                int nx = point.x + mapper[0][k];
-                int ny = point.y + mapper[1][k];
+                int ny = now.y + mapper[0][k];
+                int nx = now.x + mapper[1][k];
 
-                if (nx < 0 || ny < 0 || nx >= N || ny >= M) {
-                    continue;
-                }
+                if (ny < 0 || ny >= spaces.length || nx < 0 || nx >= spaces[0].length) continue;
+                if (spaces[ny][nx].isWall || visited[ny][nx]) continue; // 벽
 
-                if (board[nx][ny] == 0) {
-                    board[nx][ny] = groupNum;
-                    queue.add(new Point2(nx, ny));
-                    count++;
-                }
+                visited[ny][nx] = true;
+                spaces[ny][nx].groupNo = groupNo;
+                count++;
+
+                queue.offer(new Point(ny, nx));
             }
         }
 
-        groups.put(groupNum, count);
-        groupNum++;
+        count %= 10;
+        groupSize.add(count);
+
+        return spaces[i][j];
     }
 
-    private static void searchAround(int i, int j) {
-
-        Set<Integer> set = new HashSet();
+    private static int getCount(int y, int x, Space[][] spaces, List<Integer> groupSize) {
+        int count = 1;
+        Set<Integer> set = new HashSet<>();
 
         for (int k = 0; k < 4; k++) {
+            int ny = y + mapper[0][k];
+            int nx = x + mapper[1][k];
 
-            int nx = i + mapper[0][k];
-            int ny = j + mapper[1][k];
+            if (ny < 0 || ny >= spaces.length || nx < 0 || nx >= spaces[0].length) continue;
+            if (spaces[ny][nx].isWall) continue;
+            if (set.contains(spaces[ny][nx].groupNo)) continue;
 
-            // 주변이 1이 아닌 경우만 탐색
-            if (nx < 0 || ny < 0 || nx >= N || ny >= M || board[nx][ny] == 1) {
-                continue;
-            }
-
-            // set에 그룹 번호 추가
-            set.add(board[nx][ny]);
+            set.add(spaces[ny][nx].groupNo);
+            count += groupSize.get(spaces[ny][nx].groupNo);
         }
 
-        //보드에 해당 그룹번호를 이용해서 그룹의 개수를 찾아서 해당 벽에 추가
-        set.forEach((num) -> answerSheet[i][j] += groups.get(num));
-        answerSheet[i][j] %= 10;
+        return count;
     }
 
+    static class Point {
+        int y;
+        int x;
+        public Point(int y, int x) {
+            this.y = y;
+            this.x = x;
+        }
+
+    }
+    static class Space {
+
+        boolean isWall;
+        int groupNo;
+        public Space(boolean isWall, int groupNo) {
+            this.isWall = isWall;
+            this.groupNo = groupNo;
+        }
+
+    }
+    private static void printGroupNo(Space[][] spaces) {
+        System.out.println("---GroupNo---");
+        for (int y = 0; y < spaces.length; y++) {
+            for (int x = 0; x < spaces[y].length; x++) {
+                if (spaces[y][x].isWall) {
+                    System.out.print("0");
+                } else {
+                    System.out.print(spaces[y][x].groupNo);
+                }
+            }
+            System.out.println();
+        }
+        System.out.println();
+    }
+
+    private static void printCount(Space[][] spaces, List<Integer> groupSize) {
+        System.out.println("---Count---");
+        for (int y = 0; y < spaces.length; y++) {
+            for (int x = 0; x < spaces[y].length; x++) {
+                if (spaces[y][x].groupNo == -1) {
+                    System.out.print("0");
+                } else {
+                    System.out.print(groupSize.get(spaces[y][x].groupNo));
+                }
+            }
+            System.out.println();
+        }
+        System.out.println();
+    }
 }
-
-/*
-벽이 있는 위치 탐색 후, 0인 부분을 모두 방문. 방문체크하면서 방문해야한다.
-1) 0방문 시 방문 체크하기 -> 체크를 다시 풀어주기가 힘들다. x
-2) 0을 -1로 체우면서 방문하고 -1 제거해주기 o
-
---> 이와 같이 그냥 Bfs 하면 시간초과가 난다.
-
-## 해결
-분리 집합
-1) 인접한 0끼리 그룹을 만들어주고, 그룹마다 번호를 부여한다.
-2) 해당 그룹에 속하는 좌표의 개수를 HashMap에 저장
-3) 전체 board를 순회하며 1을 찾고, 주변 4방향에 있는 그룹번호들을 HashSet에 저장(중복 제거)
-4) HashSet에 저장된 값을 이용해 HashMap에 개수 검색, 추가, %10
-
-
+/**
+ * 순회하며 벽 찾기, 탐색시 1이상이면 벽
+ * 해당 벽 위치에서 bfs로 개수 세고 갱신, 1이상이면 방문 불가
+ *
+ *
  */
