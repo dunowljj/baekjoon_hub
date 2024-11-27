@@ -27,20 +27,16 @@ public class Main {
             int payDay = i + time - 1;
 
 //            printDp(N, dp);
-
-            dp[i] = Math.max(dp[i - 1], dp[i]);
+            dp[i + 1] = Math.max(dp[i + 1], dp[i]);
 
             // 기한 초과시 상담 불가
             // 예시에서 5일날 상담이 가능하듯, 마지막날 상담을 완료만 한다면 상담 가능하다.
-            if (payDay - 1 >= N) continue;
-
-            // 상담완료날 다음부터 추가상담이 가능하므로 dp배열은 다음날을 기준으로한다.
-            if (dp[payDay + 1] == 0 || dp[payDay + 1] < dp[i] + cost) {
+            // 상담완료날(payDay)  다음부터 추가상담이 가능하므로 dp배열은 다음날을 기준으로한다.
+            if (payDay <= N && dp[payDay + 1] < dp[i] + cost) {
                 dp[payDay + 1] = dp[i] + cost;
             }
         }
 
-        dp[N + 1] = Math.max(dp[N], dp[N + 1]);
 //        printDp(N, dp);
         System.out.print(dp[N + 1]);
     }
