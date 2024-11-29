@@ -33,11 +33,8 @@ class Solution {
         dp_include[2] = money[0] + money[2]; 
         
         for (int i = 3; i < n; i++) {
-            dp_exclude[i] = Math.max(dp_exclude[i - 3], dp_exclude[i - 2]) + money[i];
-            dp_exclude[i] = Math.max(dp_exclude[i - 1], dp_exclude[i]);
-            
-            dp_include[i] = Math.max(dp_include[i - 3], dp_include[i - 2]) + money[i];
-            dp_include[i] = Math.max(dp_include[i - 1], dp_include[i]);
+            dp_exclude[i] = Math.max(dp_exclude[i - 2] + money[i], dp_exclude[i - 1]);
+            dp_include[i] = Math.max(dp_include[i - 2] + money[i], dp_include[i - 1]);
         }
         
         return Math.max(dp_exclude[n - 1], dp_include[n - 2]);
