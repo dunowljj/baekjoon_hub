@@ -27,7 +27,6 @@ class Solution {
         // dp_include[2] = money[0] + money[2]; 
         // 1 3 5 6 9 4
         // 0 3 1 1 9 1
-        // 0 0 3 1 1 9
         
         for (int i = 2; i < n; i++) {
             dp_exclude[i] = Math.max(dp_exclude[i - 2] + money[i], dp_exclude[i - 1]);
@@ -39,8 +38,8 @@ class Solution {
 }
 /**
 인접한 집을 2집을 털면 안된다.
-양끝도 안되는듯
 
+양끝도 안되는듯?
 2집
 ox
 xo
@@ -60,4 +59,12 @@ oxxox
 xoxox
 xoxxo
 xxoxo
+
+
+
+
+x o x o o
+
+맨 앞집을 턴 경우와 그렇지 않은경우를 나눠봐야하나?
+
 **/
