@@ -19,9 +19,19 @@ public class Main {
         // 펠린드롬 체크
         boolean[][] isPalindrome = new boolean[N + 1][N + 1];
 
-        for (int start = 1; start <= N; start++) {
-            for (int end = start; end <= N; end++) {
-                checkPalindrome(start, end, nums, isPalindrome);
+        // 길이 1, 2인경우 미리 처리
+        for (int i = 1; i <= N; i++) {
+            isPalindrome[i][i] = true;
+
+            // 주어지는(칠판에 적은) 수는 자연수이며, 배열 0번째 요소는 0이므로 없는 값 취급 가능
+            if (nums[i - 1] == nums[i]) isPalindrome[i - 1][i] = true;
+        }
+
+        // 길이 3부터 탐색
+        for (int len = 3; len <= N; len++) {
+            for (int start = 1; start <= N - len + 1; start++) {
+                int end = start + len - 1;
+                isPalindrome[start][end] = (nums[start] == nums[end]) && isPalindrome[start + 1][end - 1];
             }
         }
 
@@ -41,17 +51,7 @@ public class Main {
         System.out.println(sb.toString().trim());
     }
 
-    private static void checkPalindrome(int start, int end, int[] nums, boolean[][] isPalindrome) {
-        int ns = start;
-        int ne = end;
-
-        while (ns < ne && nums[ns] == nums[ne]) {
-            ns++; ne--;
-        }
-
-        // 해당범위에서 모두 대칭인 경우
-        isPalindrome[start][end] = ns >= ne;
-    }
+    // 길이가 3이상인 경우만 주어지므로 인덱스 위치 검증ㅇ 필요 없다.
 }
 
 /**
@@ -61,5 +61,6 @@ public class Main {
  * M 100만
  *
  * 100만 * 2000 -> 200억
- * -> 미리 팰린드롬 여부를 구해놔야한다.
+ * -> 미리 팰린드롬 여부를 구해놔야한다. -> 하나씩 구해도 통과하긴 한다.
+ * -> dp를 이용해 빠르게 구할 수 있다.
  */
