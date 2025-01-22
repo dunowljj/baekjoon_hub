@@ -1,87 +1,104 @@
-import java.io.*;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.Stack;
-import java.util.StringTokenizer;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.*;
 
 public class Main {
-    static int[] visited;
-    static int[] parent;
+    public static final String SPACE = " ";
+    private static int N;
+    private static int K;
+
+    private static Queue<Integer> queue;
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
-
         StringTokenizer st = new StringTokenizer(br.readLine());
 
-        int N = Integer.parseInt(st.nextToken());
-        int K = Integer.parseInt(st.nextToken());
+        N = Integer.parseInt(st.nextToken());
+        K = Integer.parseInt(st.nextToken());
 
-        visited = new int[140_000];
-        parent = new int[140_000];
+        if (K <= N) {
+            StringBuilder sb = new StringBuilder();
 
-        visited[N] = 1;
-        bfs(N,K,0);
+            sb.append((N - K)).append(System.lineSeparator());
+            for (int i = N; i >= K; i--) {
+                sb.append(i).append(SPACE);
+            }
 
-        bw.write((visited[K] -1)+"\n");
-
-        Stack<Integer> stack = new Stack<>();
-        while (K != N) {
-            stack.push(K);
-            K = parent[K];
-        }
-        stack.push(N);
-
-        while (!stack.isEmpty()) {
-            bw.write(stack.pop()+" ");
+            System.out.print(sb.toString().trim());
+            System.exit(0);
         }
 
+        int max = K * 2 + 1;
 
+        queue = new LinkedList<>();
+        queue.offer(N);
 
-        bw.flush();
-        bw.close();
+        Integer[] parent = new Integer[max];
+        parent[N] = -1;
+
+        int nowTime = 0;
+        while (!queue.isEmpty()) {
+
+            int len = queue.size();
+
+            for (int i = 0; i < len; i++) {
+                int nowLoc = queue.poll();
+
+                if (nowLoc == K) {
+                    printAnswer(nowTime, nowLoc, parent);
+                    System.exit(0);
+                }
+
+                int nextLoc = nowLoc * 2;
+                if (nextLoc != 0 && nextLoc < max && parent[nextLoc] == null) {
+                    parent[nextLoc] = nowLoc;
+                    queue.offer(nextLoc);
+                }
+
+                nextLoc = nowLoc + 1;
+                if (nextLoc <= K && parent[nextLoc] == null) {
+                    parent[nextLoc] = nowLoc;
+                    queue.offer(nextLoc);
+                }
+
+                nextLoc = nowLoc - 1;
+                if (nextLoc >= 0 && parent[nextLoc] == null) {
+                    parent[nextLoc] = nowLoc;
+                    queue.offer(nextLoc);
+                }
+            }
+
+            nowTime++;
+        }
     }
 
+    private static void printAnswer(int nowTime, int nowLoc, Integer[] parent) {
+        StringBuilder sb = new StringBuilder();
+        Stack<Integer> trace = new Stack<>();
 
-    static void bfs(int N, int K, int time) {
-        Queue<Integer> queue = new LinkedList();
-
-        queue.add(N);
-
-        while (!queue.isEmpty()) {
-            N = queue.poll();
-
-
-            if (N == K) {
-                return;
-            }
-
-            if (N < K  && N <= 67000 && visited[N * 2] == 0) {
-                visited[N * 2] = visited[N] + 1;
-                queue.add(N * 2);
-                parent[N * 2] = N;
-            }
-
-            if (N != 0 && visited[N - 1] == 0) {
-                visited[N - 1] = visited[N] + 1;
-                queue.add(N - 1);
-                parent[N - 1] = N;
-            }
-
-            if (visited[N + 1] == 0 && N != 1 && N < K) {
-                visited[N + 1] = visited[N] + 1;
-                queue.add(N + 1);
-                parent[N + 1] = N;
-            }
+        // 시작점까지 경로 추적
+        while (nowLoc != N) {
+            trace.push(nowLoc);
+            nowLoc = parent[nowLoc];
         }
+        trace.push(N);
+
+        sb.append(nowTime).append(System.lineSeparator());
+
+        while (!trace.isEmpty()) {
+            int t = trace.pop();
+            sb.append(t).append(SPACE);
+        }
+
+        System.out.print(sb.toString().trim());
     }
 }
-/*
-bfs로 구한다고 치면, 깊이를 큐에 기록하면 깊이는 쉽게 구할 수 있다. 문제는 이동 경로인데, 깊이 방향으로 탐색하게 된다.
 
-배열을 10만으로 지정
-깊이를 매번 큐에 넣지 않고, 배열을 갱신하면서 계산하는게 더 효율적
-
-부모 노드를 구할때, 방문여부를 체크하기때문에 겹치지 않는다.
-
+/**
+ * 10만까지 2의 배수로 가려면?  2^17 = 131,072
+ *
+ * 3^17 = 129_149_163
+ *
+ *
  */
