@@ -15,21 +15,30 @@ public class Main {
         boolean[] isPrime = findPrimeUntil(maxSqrt);
         List<Long> primePows = compressAndPow(isPrime);
 
-//        System.out.println(primePows.size());
+        long answer = max - min + 1;
+        boolean[] canDivided = new boolean[(int) (max - min + 1)];
 
-        Set<Long> answers = new HashSet<>();
         for (Long primePow : primePows) {
 
             // 적절한 첫 시작값을 찾아야함
-            long start = min / primePow;
-            for (long i = start; i <= max / primePow; i++) {
-                if (min <= i * primePow && i * primePow <= max) {
-                    answers.add(i * primePow);
+            long start = min % primePow == 0 ?
+                    min / primePow :
+                    min / primePow + 1;
+
+            long end = max / primePow;
+
+            for (long i = start; i <= end; i++) {
+                long result = i * primePow;
+                int idx = (int) (result - min);
+
+                if (!canDivided[idx]) {
+                    canDivided[idx] = true;
+                    answer--;
                 }
             }
         }
 
-        System.out.print((max - min + 1) - answers.size());
+        System.out.print(answer);
     }
 
     private static boolean[] findPrimeUntil(int maxSqrt) {
@@ -87,6 +96,6 @@ public class Main {
  * 역으로
  * - 제곱수가 일단 min~max 사이에 있다면 체크한다.
  * - 제곱수를 곱해서 Set으로 중복체크를 하며, 제거하고 여부를 체크할 수 있지 않을까?
- * 
+ *
  * 8만개의 소수의 곱을 해당 최대 100만인 범위 내에서만 찾는다.
  */
