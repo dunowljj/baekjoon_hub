@@ -36,10 +36,8 @@ public class Main {
             while (1 <= y && 1 <= x) {
 
                 if (s2.charAt(y - 1) == s1.charAt(x - 1)) {
-                    if (dp[y - 1][x - 1] + 1 == dp[y][x]) {
-                        LCS.append(s2.charAt(y - 1));
-                        y--; x--;
-                    }
+                    LCS.append(s2.charAt(y - 1));
+                    y--; x--;
                 } else {
                     if (dp[y - 1][x] > dp[y][x - 1]) {
                         y--;
