@@ -33,12 +33,12 @@ class Solution {
         // n개의 사용자 유저아이디로 m개를 뽑는 모든 조합을 만듬
         findCombs(0, n, m, new HashSet<>());
         
-        for (Set<Integer> comb : combs) {
-            for (int u_id : comb) {
-                System.out.print(u_id + " ");
-            }
-            System.out.println();
-        }
+//         for (Set<Integer> comb : combs) {
+//             for (int u_id : comb) {
+//                 System.out.print(u_id + " ");
+//             }
+//             System.out.println();
+//         }
         
         return combs.size();
     }
