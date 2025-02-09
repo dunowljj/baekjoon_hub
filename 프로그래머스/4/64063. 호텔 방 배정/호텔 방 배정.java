@@ -9,43 +9,22 @@ class Solution {
         
         for (int i = 0; i < n; i++) {
             long requestNumber = room_number[i];
-            
-            // 예약되지 않은 방            
-            if (!map.containsKey(requestNumber)) {
-                // 예약
-                answer[i] = requestNumber;
-                
-                // 다음 위치 저장
-                long availableRoom = findNextAvailableRoom(requestNumber + 1);
-                map.put(requestNumber, availableRoom);
-                
-            // 이미 예약된 방
-            } else {
-                // 예약
-                long availableRoom = findNextAvailableRoom(requestNumber);
-                answer[i] = availableRoom;
-                
-                // 다음 위치 저장
-                long nextAvailable = findNextAvailableRoom(availableRoom + 1);
-                map.put(requestNumber, nextAvailable);
-                map.put(availableRoom, nextAvailable);        
-            }
+            answer[i] = find(requestNumber);
         }        
         
         return answer;
     }
     
-    private long findNextAvailableRoom(long roomNumber) {
+    private long find(long roomNumber) {
         if (!map.containsKey(roomNumber)) {
+            map.put(roomNumber, roomNumber + 1);
             return roomNumber;
         }
         
-        long parent = map.get(roomNumber);
-        
         // 경로 압축
-        long result = findNextAvailableRoom(parent);
-        map.put(roomNumber, result);
-        return result;
+        long next = find(map.get(roomNumber));
+        map.put(roomNumber, next);
+        return next;
     }
 }
 /**
