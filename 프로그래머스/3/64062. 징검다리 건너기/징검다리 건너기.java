@@ -1,50 +1,55 @@
+import java.util.*;
+
 class Solution {
     public int solution(int[] stones, int k) {
-        int low = 1; // T
-        int high = 200_000_000; // F
-
-        while (low + 1 < high) {
-            int mid = (low + high) / 2;
-
-            if (canCrossBridge(mid, stones, k)) {
-                low = mid;
+        
+        int lo = 0;
+        int hi = 200_000_000;
+        
+        // 첫 F구하기
+        // T T T F F F
+        // T T T -> 계속 건널수 있는 경우는 없음
+        // F F F -> 맨왼쪽 F
+        while (lo < hi) {
+            int mid = (lo + hi) / 2;
+            if (canCross(mid, stones, k)) {
+                lo = mid + 1;
             } else {
-                high = mid;
+                hi = mid;
             }
         }
-
-        return low;
+        
+        return lo;
     }
-
-    // 주어진 passCount 값보다 작거나 같은 수를 가진 돌은 건널수 없다.
-    // 문제는 passCount 만큼 지나갔을때, 건널수 있는지 여부를 판단하는 내용이다.
-    // passCount만큼 딱 지나갔을때, 건널 수 없게 된 걸 수도 있다. -> -1 한 채로 검사
-    private boolean canCrossBridge(int passCount, int[] stones, int k) {
-        int seq = 0;
-        passCount --;
-
-        for (int i = 0; i < stones.length; i++) {
-            if (cannotStep(stones[i], passCount)) {
-                seq ++;
+    
+    public boolean canCross(int passCount, int[] stones, int k) {
+        int seqCount = 0;
+        int maxSeq = 0;
+        for (int size : stones) {
+            // useCount만큼 지나가면 0인 경우
+            if (size <= passCount) {
+                seqCount++;
+                maxSeq = Math.max(seqCount, maxSeq);
             } else {
-                seq = 0;
+                seqCount = 0;
             }
-
-            if (seq == k) return false;
         }
-
-        return true;
-    }
-
-    private boolean cannotStep(int stoneValue, int passCount) {
-        return stoneValue <= passCount;
+        
+        return maxSeq < k;
     }
 }
 /*
-F..F..T..T
-T의 최솟값
-*/
-/*
-F..F..T..T
-T의 최솟값
+밟으면 1줄어듬
+0이면 스킵하고 넘어감. 가장 가까운 디딤돌로만 점프 가능
+
+건너야하는 친구는 무제한.
+돌 1~20만
+k는 돌개수 이하
+
+각 원소 2억 이하
+
+슬라이딩 윈도우로 탐색하면서, TreeMap으로 세주기 -> k가 5만이라면, 15만번 sliding을 해야하므로, 15만*20만*log(5만) -> 시간초과
+
+이분탐색 사용시 log(2억) * 20만으로 훨씬 빠르다.
+
 */
