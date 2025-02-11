@@ -3,11 +3,11 @@ class Solution {
         long answer = 0;
         
         long lo = 0;
-        long hi = 100_000_000_000_000L;
+        long hi = Long.MAX_VALUE;
         
         // F F T T T
         while (lo < hi) {
-            long mid = (lo + hi) / 2;
+            long mid = (hi - lo) / 2 + lo;
             
             if (canComplete(mid, times, n)) {
                 hi = mid;
@@ -22,7 +22,8 @@ class Solution {
     private boolean canComplete(long minute, int[] times, int n) {
         long completeCount = 0;
         for (int time : times) {
-            completeCount += minute / time;
+            completeCount += minute / (long) time;
+            if (completeCount >= n) return true;
         }
         
         return completeCount >= n;
