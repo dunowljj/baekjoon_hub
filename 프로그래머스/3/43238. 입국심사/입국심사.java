@@ -3,7 +3,7 @@ class Solution {
         long answer = 0;
         
         long lo = 0;
-        long hi = Long.MAX_VALUE;
+        long hi = (long) Math.pow(10, 18);
         
         // F F T T T
         while (lo < hi) {
@@ -19,10 +19,10 @@ class Solution {
         return lo;
     }
     
-    private boolean canComplete(long minute, int[] times, int n) {
+    private boolean canComplete(long mid, int[] times, int n) {
         long completeCount = 0;
         for (int time : times) {
-            completeCount += minute / (long) time;
+            completeCount += mid / (long) time;
             if (completeCount >= n) return true;
         }
         
@@ -32,4 +32,5 @@ class Solution {
 
 /**
 시간내에 심사가 불가하다면?
+1명 심사관이 10억분이 걸려서 10억명을 심사한다면? -> 최대 10^18
 */
