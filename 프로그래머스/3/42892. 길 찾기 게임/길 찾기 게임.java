@@ -14,14 +14,9 @@ class Solution {
             .sorted()  // y내림차순, x오름차순
             .collect(Collectors.toList());
         
-        // for (Node node: nodes) {
-        //     System.out.print(node.no+": "+ node.y +","+node.x+"  ");
-        // }
-        
         Node root = nodes.get(0);    
-        createGraph(1, nodes, root, -1, 100_001);
-        
-        order(root);
+        createGraph(nodes, root);
+        findOrder(root);
         
         int[][] answer = new int[2][n];
         answer[0] = pre.stream().mapToInt(Integer::intValue).toArray();
@@ -29,58 +24,45 @@ class Solution {
         return answer;
     }
     
-    private void order(Node root) {
+    private void createGraph(List<Node> nodes, Node root) {
+        for (int i = 1; i < nodes.size(); i++) {
+            root.add(nodes.get(i));
+            // add(root, nodes.get(i));
+        }
+    }
+    
+    private void add(Node head, Node inserted) {    
+        if (inserted.x < head.x) {
+            if (head.left == null) {
+                head.left = inserted;
+            } else {
+                head = head.left;
+                add(head.left, inserted);
+            }
+            return;
+        }
+
+        if (head.x < inserted.x) {
+            if (head.right == null) {
+                head.right = inserted;
+            } else {
+                add(head.right, inserted);
+            }
+            return;
+        }
+    }
+    
+    private void findOrder(Node root) {
         if (root == null) {
             return;
         }
         
         pre.add(root.no);
         
-        order(root.left);
-        order(root.right);
+        findOrder(root.left);
+        findOrder(root.right);
         
         post.add(root.no);
-    }
-    
-    private void createGraph(int idx, List<Node> nodes, Node parent, int start, int end) {
-        if (idx >= nodes.size()) return;
-        
-        int nlIdx = findNextLevelIdx(idx, parent.y, nodes);
-        if (nlIdx == -1) return; // 하위 노드가 없음
-        int nly = nodes.get(nlIdx).y;
-        
-        for (int i = nlIdx; i < nodes.size(); i++) {
-            Node now = nodes.get(i);
-            int y = now.y;
-            int x = now.x;
-            
-            if (nly == y) {
-                // left
-                if (start < x && x < parent.x) {
-                   parent.left = nodes.get(i);
-                   createGraph(idx + 1, nodes, now, start, parent.x); 
-                }
-                
-                // right
-                if (parent.x < x && x < end) {
-                   parent.right = nodes.get(i);
-                   createGraph(idx + 1, nodes, now, parent.x, end); 
-                }
-                
-            } else {
-                return;
-            }
-        }
-    }
-    
-    private int findNextLevelIdx(int idx, int py, List<Node> nodes) {
-        for (int i = idx; i < nodes.size(); i++) {
-            if (nodes.get(i).y < py) {
-                return i;
-            }
-        }
-        
-        return -1;
     }
     
     static class Node implements Comparable<Node> {
@@ -105,14 +87,36 @@ class Solution {
             }
             return node.y - this.y;
         }
+        
+        public void add(Node node) {
+            Node head = this;
+            
+            while (true) {
+                if (node.x < head.x) {
+                    if (head.left == null) {
+                        head.left = node;
+                        return;
+                    } else {
+                        head = head.left;
+                        continue;
+                    }
+                }
+
+                if (head.x < node.x) {
+                    if (head.right == null) {
+                        head.right = node;
+                        return;
+                    } else {
+                        head = head.right;
+                        continue;
+                    }
+                }
+            }
+        }
     }
 }
 /*
-y값이 클수록 위에 있는 그래프 형태
-가장 큰 y값이 루트노드. y기준 내림차순 정렬
-y좌표가 같다 == level이 같다
-x값의 위치에 따라 왼,오른쪽 서브
+(y오름,x내림)정렬 -> bfs처럼 트리 모양을 탐색하게 된다.
+순회를 하면서, x크기에 따라 해당 방향으로 이동하여 하나씩 삽입한다.
 
-문제는 예시에서 처럼 한 레벨에 3개 노드가 있다면, 가운데노드가 누구 자식인지 어떻게 아는가?
-부모 노드들 기준으로 갈린다. 7,4의 사이에 있으므로...
 */
