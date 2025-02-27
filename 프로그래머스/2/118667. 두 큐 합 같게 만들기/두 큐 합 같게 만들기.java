@@ -1,70 +1,69 @@
-import java.util.*;
+import java.util.Queue;
+import java.util.LinkedList;
 
 class Solution {
-    
-    private final int IMPOSSIBLE = -1;
-    
     public int solution(int[] queue1, int[] queue2) {
-        int answer = 0;
-        long sum = 0;
-        int n = queue1.length; // 조건에서 1,2의 길이는 같다.
-        int maxJob = 3 * n;
         
-        Queue<Integer> left = new LinkedList<>();
-        Queue<Integer> right = new LinkedList<>();
-        long lSum = 0;
-        long rSum = 0;
-        
-        for (int i = 0; i < n; i++) {
-            sum += queue1[i];
-            sum += queue2[i];
-            lSum += queue1[i];
-            rSum += queue2[i];
-            
-            left.offer(queue1[i]);
-            right.offer(queue2[i]);
+        long sum1 = 0L;
+        Queue<Integer> q1 = new LinkedList();
+        for (int i = 0; i < queue1.length; i++) {
+            int curr = queue1[i];
+            sum1 += curr;
+            q1.offer(curr);
         }
         
-        if (sum % 2 == 1) return IMPOSSIBLE;
+        long sum2 = 0L;
+        Queue<Integer> q2 = new LinkedList();
+        for (int i = 0; i < queue2.length; i++) {
+            int curr = queue2[i];
+            sum2 += curr;
+            q2.offer(curr);
+        }
         
-        long target = sum / 2;
-        int job = 0;
-        while (job++ <= maxJob) {
-            if (lSum > rSum) {
-                int poll = left.poll();
-                lSum -= poll;
-                rSum += poll;
-                right.offer(poll);
+        int len = q1.size() * 4;
+        for (int i = 0; i < len; i++) {
+            if (sum1 > sum2) {
+               if (q1.size() == 1) return -1;
+                
+                int curr = q1.poll();
+                sum1 -= curr;
 
-                answer++;
+                q2.offer(curr);
+                sum2 += curr;
+            }
+            
+            else if (sum1 == sum2) {
+                return i;
+            }
+            
+            else {
+                 if (q2.size() == 1) return -1;
+                
+                int curr = q2.poll();
+                sum2 -= curr;
 
-            } else if (lSum == rSum) {
-                System.out.println(answer);
-                return answer;
-
-            } else {
-                int poll = right.poll(); 
-                lSum += poll;
-                rSum -= poll;
-                left.offer(poll);
-
-                answer++;
+                q1.offer(curr);
+                sum1 += curr;
             }
         }
-        
-        // 총 길이 1.5배만큼 탐색 -> 한쪽큐에서 다른 큐로 모두 옮긴 다음, 다시 원래큐로 모두 옮길 수 있을 때
-        // 결과를 못찾으면 실패다.
-        return IMPOSSIBLE;
+        return -1;
     }
-}
-/**
-길이 1~30만
+}   
+/*
+방향이 정해져있기 때문에 하나의 큐에서 뽑아서 맨 뒤에 넣으면서 연속된 합이 반으로 나뉠수 있는 경우를 구하는 것과 같다.
+큐를 한바퀴(두 큐의 길이의 합만큼) 작업했을때 합을 구하지 못하면, 불가능이다.
+값에 따라 한바퀴 이상 돌려야하는 경우가 있다.
 
-poll하면 무조건 다른 큐에 넣어야한다. 
-[3, 2, 7, 2] [4, 6, 5, 1]
-결국 일자 통행과 같으며, 앞구간의 합이 뒷구간의 합과 같아야함.
 
-절반 크기의 slide window 문제이기도 한듯. %연산활용해서도 풀어보자.
-slide를 하되, slide위치에 따라 계산해줘야할듯
+최소횟수?
+합이 큰 경우에서 작은 경우로 옮기면서 합계산
+두 큐의 사이즈만큼 반복, 두 큐 초기 길이는 같음.
+
+큐 길이가 1?
+[1] [2]
+-> [1, 2] [] 1회
+-> [2] [1] 2회 -> 종료
+
+
 
 */
