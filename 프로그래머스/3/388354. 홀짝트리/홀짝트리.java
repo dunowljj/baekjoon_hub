@@ -3,11 +3,10 @@ import java.util.*;
 class Solution {
     
     List<Integer>[] adj;
-    Set<Integer> checked = new HashSet<>();
     
     int groupNoSeq = 0;
-    Map<Integer, Integer> nodeToGroup = new HashMap<>(); // node -> groupNo    
-    Map<Integer, List<Integer>> groupToNodes = new HashMap<>(); // groupNo -> nodes  
+    Set<Integer> visited = new HashSet<>();
+    Map<Integer, List<Integer>> groupMap = new HashMap<>(); // groupNo -> nodes  
 
     public static final int FORWARD_TREE = 0;
     public static final int REVERSE_TREE = 1;
@@ -28,7 +27,7 @@ class Solution {
             grouping(root);
         }
         
-//         for (Map.Entry<Integer, List<Integer>> e : groupToNodes.entrySet()) {
+//         for (Map.Entry<Integer, List<Integer>> e : groupMap.entrySet()) {
 //             System.out.print("["+e.getKey()+"]: ");
             
 //             for (int no : e.getValue()) {
@@ -37,7 +36,7 @@ class Solution {
 //             System.out.println();
 //         }
         
-        for (List<Integer> tree : groupToNodes.values()) {
+        for (List<Integer> tree : groupMap.values()) {
             // 루트가 아닐때 색깔 세기
             int yellow = 0;
             int red = 0;
@@ -65,29 +64,28 @@ class Solution {
     }
     
     private void grouping(int root) {
-        if (nodeToGroup.containsKey(root)) {
+        if (visited.contains(root)) {
             return;
         }
         
-        nodeToGroup.put(root, groupNoSeq);
-        List<Integer> group = new ArrayList<>();
-        group.add(root);
+        List<Integer> group = getGroup(root, new ArrayList<>());
+        groupMap.put(root, group);
         
-        groupingNodes(root, group);
-        
-        groupToNodes.put(root, group);
         groupNoSeq++;
     }
     
-    private void groupingNodes(int now, List<Integer> group) {
+    private List<Integer> getGroup(int now, List<Integer> group) {
+        if (visited.contains(now)) {
+            return group;
+        }
+        visited.add(now);
+        group.add(now);
+        
         for (int next : adj[now]) {
-            if (!nodeToGroup.containsKey(next)) {
-                nodeToGroup.put(next, groupNoSeq);
-                group.add(next);
-                
-                groupingNodes(next, group);    
-            }
-        }   
+            getGroup(next, group);    
+        }
+        
+        return group;
     }   
 }
 /**

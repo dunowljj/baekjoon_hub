@@ -1,10 +1,10 @@
 # [level 3] 홀짝트리 - 388354 
 
-[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/388354) 
+[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/388354#qna) 
 
 ### 성능 요약
 
-메모리: 305 MB, 시간: 537.18 ms
+메모리: 285 MB, 시간: 581.61 ms
 
 ### 구분
 
@@ -16,7 +16,7 @@
 
 ### 제출 일자
 
-2025년 03월 02일 12:32:27
+2025년 03월 02일 12:49:26
 
 ### 문제 설명
 
