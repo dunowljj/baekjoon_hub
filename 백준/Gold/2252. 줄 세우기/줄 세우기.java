@@ -1,11 +1,13 @@
+import javax.sound.sampled.Line;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.StringTokenizer;
+import java.util.*;
 
 public class Main {
+
+    public static final String SPACE = " ";
+
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
@@ -27,34 +29,27 @@ public class Main {
             indegree[B]++;
         }
 
-        List<Integer> line = new ArrayList<>();
+        StringBuilder line = new StringBuilder();
+        Queue<Integer> queue = new LinkedList<>();
 
-        while (N > 0) {
-            List<Integer> remove = new ArrayList<>();
-            for (int i = 1; i < indegree.length; i++) {
-                if (indegree[i] == 0) {
-                    indegree[i] = -1;
-                    remove.add(i);
-                }
+        for (int i = 1; i < indegree.length; i++) {
+            if (indegree[i] == 0) {
+                queue.offer(i);
             }
-
-            for (int node : remove) {
-                N--;
-                removeConnection(adj, indegree, node);
-            }
-            line.addAll(remove);
         }
 
+        while (!queue.isEmpty()) {
+            int now = queue.poll();
 
-        StringBuilder sb = new StringBuilder();
-        line.forEach((ch) -> sb.append(ch).append(" "));
-        System.out.print(sb.toString().trim());
-    }
+            line.append(now).append(SPACE);
 
-    private static void removeConnection(List<Integer>[] adj, int[] indegree, int i) {
-        for (int next : adj[i]) {
-            indegree[next]--;
+            for (int next : adj[now]) {
+                indegree[next]--;
+                if (indegree[next] == 0) queue.offer(next);
+            }
         }
+
+        System.out.print(line.toString().trim());
     }
 }
 
