@@ -1,41 +1,121 @@
 import java.util.*;
 
 class Solution {
+    
+    
     public int[] solution(String[] operations) {
-        int[] answer = new int[2];
-
-        PriorityQueue<Integer> pq = new PriorityQueue<>();
-        TreeMap<Integer, Integer> treeMap = new TreeMap();
-
+        MinMaxHeap heap = new MinMaxHeap();
+        
         for (String operation : operations) {
-            int num = Integer.parseInt(
-                    operation.split(" ")[1]
-            );
-
-            if (operation.startsWith("I")) {
-                treeMap.put(num, treeMap.getOrDefault(num , 0) + 1);
+            String[] split = operation.split(" ");
+            
+            // insert
+            if (split[0].equals("I")) {
+                heap.insert(Integer.parseInt(split[1]));
             }
-
-            // 최솟값 삭제
-            else if (!treeMap.isEmpty() && operation.startsWith("D -")) {
-                treeMap.remove(treeMap.firstKey());
+            
+            // delete
+            if (split[0].equals("D")) {
+                if (split[1].charAt(0) == '-') heap.deleteMin();
+                else heap.deleteMax();
             }
+        }
+        
+        if (heap.size() == 0) return new int[]{0, 0};
+        else return new int[]{heap.peekMax(), heap.peekMin()};
+    }
+    
+    
+    class MinMaxHeap {
+        Map<Integer, Integer> countMap = new HashMap<>();
+        Queue<Integer> minHeap = new PriorityQueue<>();
+        Queue<Integer> maxHeap = new PriorityQueue<>(Comparator.reverseOrder());
 
-            // 최댓값 삭제
-            else if (!treeMap.isEmpty() && operation.startsWith("D")) {
-                treeMap.remove(treeMap.lastKey());
+        MinMaxHeap(){}
+        
+        public void insert(int num) {
+            minHeap.add(num);
+            maxHeap.add(num);
+
+            countMap.put(num, countMap.getOrDefault(num, 0) + 1);
+        }
+
+        public void deleteMin() {
+            // 비어있다면 무시
+            while (!minHeap.isEmpty()) {
+                int min = minHeap.peek();
+
+                // 사용해서 안되는 정보
+                if (!countMap.containsKey(min)) {
+                    minHeap.poll();
+
+                // 사용가능
+                } else {
+                    countMap.put(min, countMap.get(min) - 1);
+                    if (countMap.get(min) == 0) countMap.remove(min);
+                    minHeap.poll();
+                    return;
+                }
             }
         }
 
-        if (!treeMap.isEmpty()) {
-            answer = new int[]{treeMap.lastKey(), treeMap.firstKey()};
+        public void deleteMax() {
+            // 비어있다면 무시
+            while (!maxHeap.isEmpty()) {
+                int max = maxHeap.peek();
+
+                // 사용해서 안되는 정보
+                if (!countMap.containsKey(max)) {
+                    maxHeap.poll();
+
+                // 사용가능
+                } else {
+                    countMap.put(max, countMap.get(max) - 1);
+                    if (countMap.get(max) == 0) countMap.remove(max);
+                    maxHeap.poll();
+                    return;
+                }
+            }
         }
 
-        return answer;
+        public int peekMin() {
+            while (!minHeap.isEmpty()) {
+                int min = minHeap.peek();
+
+                // 사용해서 안되는 정보
+                if (!countMap.containsKey(min)) {
+                    minHeap.poll();
+
+                // 사용가능
+                } else {
+                    break;
+                }
+            }
+
+            return minHeap.peek();
+        }
+
+        public int peekMax() {
+            while (!maxHeap.isEmpty()) {
+                int max = maxHeap.peek();
+
+                // 사용해서 안되는 정보
+                if (!countMap.containsKey(max)) {
+                    maxHeap.poll();
+                // 사용가능
+                } else {
+                    break;
+                }
+            }
+
+        return  maxHeap.peek();
+        }
+        
+        public int size() {
+            return countMap.size();
+        }
     }
 }
 /**
- * 최댓값/최솟값을 삭제하는 연산에서 최댓값/최솟값이 둘 이상인 경우, 하나만 삭제
- * 큐가 비어있다면 삭제연산 무시
- * 중복된 값의 처리를 신경쓰지 못했다. --> Map으로 바꿔야할듯
- */
+
+**/
