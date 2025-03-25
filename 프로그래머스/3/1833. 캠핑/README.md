@@ -1,10 +1,10 @@
 # [level 3] 캠핑 - 1833 
 
-[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/1833) 
+[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/1833#) 
 
 ### 성능 요약
 
-메모리: 97.5 MB, 시간: 8221.09 ms
+메모리: 199 MB, 시간: 2712.12 ms
 
 ### 구분
 
@@ -16,7 +16,7 @@
 
 ### 제출 일자
 
-2025년 03월 25일 16:45:32
+2025년 03월 25일 18:23:21
 
 ### 문제 설명
 
