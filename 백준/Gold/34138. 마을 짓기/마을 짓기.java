@@ -7,6 +7,7 @@ public class Main {
 
     private static int N,M;
     private static boolean[][] shine;
+    private static int[][] diagonal;
     private static int[][] house;
 
 
@@ -18,12 +19,13 @@ public class Main {
 
         shine = new boolean[N + 1][M + 1];
         house = new int[N + 1][M + 1];
-        for (int i = 0; i < N; i++) {
+        diagonal = new int[N + 1][M + 1];
+        for (int y = 0; y < N; y++) {
             String line = br.readLine();
 
-            for (int j = 0; j < M; j++) {
-                if (line.charAt(j) == 'X') {
-                    shine[i + 1][j + 1] = true;
+            for (int x = 0; x < M; x++) {
+                if (line.charAt(x) == 'X') {
+                    shine[y + 1][x + 1] = true;
                 }
             }
         }
@@ -36,16 +38,32 @@ public class Main {
             }
         }
 
+        // 연속 대각선 누적
+        for (int y = 1; y <= N; y++) {
+            for (int x = 1; x <= M; x++) {
+                if (shine[y][x]) {
+                    diagonal[y][x] = diagonal[y - 1][x - 1] + 1;
+                }
+            }
+        }
+
+//        for (int y = 1; y <= N; y++) {
+//            for (int x = 1; x <= M; x++) {
+//                System.out.print(diagonalDp[y][x]+ " ");
+//            }
+//            System.out.println();
+//        }
+
         StringBuilder answer = new StringBuilder();
         int min = Math.min(N, M);
 
         for (int k = 1; k <= min; k++) {
             int count = 0;
-            int houseNeed = k * (k - 1);
+            int houseNeed = k * k - k;
 
             for (int y = 1; y <= N - k + 1; y++) {
                 for (int x = 1; x <= M - k + 1; x++) {
-                    if (!checkDiagonal(y, x, k)) continue;
+                    if (diagonal[y + k - 1][x + k - 1] < k) continue;
 
                     int houseSum = house[y + k - 1][x + k - 1] - house[y - 1][x + k - 1] - house[y + k - 1][x - 1] + house[y - 1][x - 1];
                     if (houseNeed == houseSum) count++;
@@ -57,24 +75,15 @@ public class Main {
                     .append(System.lineSeparator());
         }
 
-        System.out.print(answer);
-    }
-
-    private static boolean checkDiagonal(int y, int x, int k) {
-        for (int i = 0; i < k; i++) {
-            if (!shine[y + i][x + i]) return false;
-        }
-
-        return true;
+        System.out.print(answer.toString().trim());
     }
 }
 /**
  * 최대 2000*2000
- * K는 최대 2000! ->
- *
- * 500 * 500을 1500번? 25_000_000 * 15 -> 3억7천?
- * 모든 경우 구하다보면, 브루트포스하면 무조건 연산 10억회는 넘어간다.
- * 집 위치의 누적합을 미리 구해놓고, 대각선만 점검한다면? K*K에서 K개와 나머지 집 수만 검사하면 된다.
+ * K는 최대 2000!
  *
  * K == 1일때는 X가 영역의 수
+ *
+ * 집 수는 K만으로도 추측 가능. 누적합으로 집의 수를 미리 세고 비교한다.
+ * 연속 대각선 수는 미리 구해놓는다. 매번 k개만큼 검사하여 대각선을 체크하면 시간복잡도 너무 높아진다.
  */
