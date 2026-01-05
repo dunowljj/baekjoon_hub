@@ -30,7 +30,7 @@ public class Main {
 
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
-                eatAndMove(new int[]{i, j});
+                if (move[i][j] == 0) dfs(i, j);
             }
         }
 
@@ -41,17 +41,13 @@ public class Main {
             }
         }
 
-
         System.out.print(max);
     }
 
-    private static void eatAndMove(int[] start) {
-        dfs(start[0], start[1]);
-    }
-
     private static int dfs(int y, int x) {
-        int adjCount = 0;
-        int max = 0;
+        if (move[y][x] != 0) return move[y][x];
+
+        int max = 1;
         for (int i = 0; i < 4; i++) {
             int ny = y + mapper[0][i];
             int nx = x + mapper[1][i];
@@ -59,16 +55,9 @@ public class Main {
             if (ny < 0 || ny >= n || nx < 0 || nx >= n) continue;
             if (forest[y][x] <= forest[ny][nx]) continue;
 
-            adjCount++;
-            if (move[ny][nx] != 0) max = Math.max(max, move[ny][nx]);
-            else max = Math.max(max, dfs(ny, nx));
+            max = Math.max(max, dfs(ny, nx) + 1);
         }
 
-        if (adjCount == 0) return move[y][x] = 1;
-        else return move[y][x] = max + 1;
+        return move[y][x] = max;
     }
 }
-
-/**
- * n 최대 500 -> 각 모든 위치를 탐색해보는 경우 n^4 시간초과 
- */
