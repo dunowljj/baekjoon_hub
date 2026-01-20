@@ -4,9 +4,7 @@ import java.io.InputStreamReader;
 
 public class Main {
 
-    static boolean[] swapped;
     static boolean[] isVIP;
-    static int[][] dp;
     static int N, M;
     static int count = 0;
 
@@ -16,8 +14,6 @@ public class Main {
         N = Integer.parseInt(br.readLine());
         M = Integer.parseInt(br.readLine());
 
-//        dp = new int[N + 1][2]; //[a][0] no swap
-        swapped = new boolean[N + 1];
         isVIP = new boolean[N + 1];
 
         for (int i = 0; i < M; i++) {
@@ -31,17 +27,13 @@ public class Main {
     }
 
     static void dfs(int idx) {
-        if (idx == N) {
+        if (idx >= N) {
             count++;
             return;
         }
 
-        if (!isVIP[idx] && !isVIP[idx + 1] && !swapped[idx])  {
-            swapped[idx] = true;
-            swapped[idx + 1] = true;
-            dfs(idx + 1);
-            swapped[idx] = false;
-            swapped[idx + 1] = false;
+        if (!isVIP[idx] && !isVIP[idx + 1])  {
+            dfs(idx + 2);
         }
 
         dfs(idx + 1);
