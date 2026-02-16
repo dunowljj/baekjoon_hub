@@ -6,87 +6,71 @@ import java.util.*;
 public class Main {
 
     public static final String INF = "INF";
-    static List<Node>[] adjList;
     static int[] dist;
-
-    static int V,E,start;
-
+    static List<Node>[] adj;
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
-        V = Integer.parseInt(st.nextToken());
-        E = Integer.parseInt(st.nextToken());
-        start = Integer.parseInt(br.readLine());
 
-        adjList = new ArrayList[V + 1];
-        for (int i = 0; i < adjList.length; i++) {
-            adjList[i] = new ArrayList<>();
-        }
+        int V = Integer.parseInt(st.nextToken());
+        int E = Integer.parseInt(st.nextToken());
+        int K = Integer.parseInt(br.readLine());
 
         dist = new int[V + 1];
         Arrays.fill(dist, Integer.MAX_VALUE);
 
+        adj = new ArrayList[V + 1];
+        for (int i = 0; i < V + 1; i++) {
+            adj[i] = new ArrayList<>();
+        }
+
         for (int i = 0; i < E; i++) {
             st = new StringTokenizer(br.readLine());
-
             int u = Integer.parseInt(st.nextToken());
             int v = Integer.parseInt(st.nextToken());
             int w = Integer.parseInt(st.nextToken());
 
-            adjList[u].add(new Node(v, w));
+            adj[u].add(new Node(v, w));
         }
 
+        PriorityQueue<Node> pq = new PriorityQueue<>(Comparator.comparingInt(n -> n.dist));
+        boolean[] visited = new boolean[V + 1];
+        pq.offer(new Node(K, 0));
+        dist[K] = 0;
 
-        daijkstra();
+        while (!pq.isEmpty()) {
+            Node now = pq.poll();
+
+            if (visited[now.no]) continue;
+            visited[now.no] = true;
+
+            for (Node next : adj[now.no]) {
+                if (dist[next.no] > dist[now.no] + next.dist) {
+                    dist[next.no] = dist[now.no] + next.dist;
+                    pq.offer(new Node(next.no, dist[next.no]));
+                }
+            }
+        }
 
         StringBuilder sb = new StringBuilder();
-        for (int i = 1; i <= V; i++) {
-            if (dist[i] == Integer.MAX_VALUE) sb.append(INF);
-            else sb.append(dist[i]);
+        for (int i = 1; i < dist.length; i++) {
+            if (dist[i] != Integer.MAX_VALUE) sb.append(dist[i]);
+            else sb.append(INF);
 
             sb.append(System.lineSeparator());
         }
 
-        System.out.print(sb);
+        System.out.print(sb.toString().trim());
     }
 
-    private static void daijkstra() {
-        PriorityQueue<Node> pq = new PriorityQueue<>();
-        boolean[] visited = new boolean[V + 1];
-        pq.offer(new Node(start, 0));
-        dist[start] = 0;
+    static class Node {
+        int no;
+        int dist;
 
-        while (!pq.isEmpty()) {
-            Node node = pq.poll();
-            int cur = node.end;
-            int curWeight = node.weight;
-
-            if (visited[cur]) continue;
-            visited[cur] = true;
-
-            for (Node next : adjList[cur]) {
-                if (dist[next.end] > curWeight + next.weight) {
-                    dist[next.end] = curWeight + next.weight;
-                    pq.offer(new Node(next.end, dist[next.end]));
-                }
-            }
-        }
-    }
-
-    static class Node implements Comparable<Node> {
-
-        int end;
-        int weight;
-
-        public Node(int end, int weight) {
-            this.end = end;
-            this.weight = weight;
-        }
-
-        @Override
-        public int compareTo(Node o) {
-            return this.weight - o.weight;
+        public Node(int no, int dist) {
+            this.no = no;
+            this.dist = dist;
         }
     }
 }
