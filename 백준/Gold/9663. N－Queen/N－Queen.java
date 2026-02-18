@@ -1,51 +1,48 @@
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Arrays;
 
 public class Main {
-    static int[] queen;
+
+    public static final int NON = -100;
+    static int count = 0;
     static int N;
-    static int answer = 0;
+
+    static boolean[] col;
+    static boolean[] dia1;
+    static boolean[] dia2;
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
-
         N = Integer.parseInt(br.readLine());
-        queen = new int[N];
-        recur(0);
+        col = new boolean[N];
+        dia1 = new boolean[2 * N];
+        dia2 = new boolean[2 * N];
 
-        bw.write(answer+"");
-        bw.flush();
-        bw.close();
+        find(0);
+        System.out.print(count);
     }
 
-    static void recur(int row) {
-        if (row == N) {
-            answer++;
+    private static void find(int r) {
+        if (r == N) {
+            count++;
             return;
         }
 
-        for (int i = 0; i < N; i++) {
-            queen[row] = i;
-            if (queenable(row)) {
-                recur(row + 1);
+        for (int c = 0; c < N; c++) {
+            if (!col[c] && !dia1[r + c] && !dia2[r - c + N - 1]) {
+
+                col[c] = true;
+                dia1[r + c] = true;
+                dia2[r - c + N - 1] = true;
+
+                find(r + 1);
+
+                col[c] = false;
+                dia1[r + c] = false;
+                dia2[r - c + N - 1] = false;
             }
         }
     }
-
-
-    private static boolean queenable(int row) {
-        for (int i = 0; i < row; i++) {
-            if (queen[i] == queen[row]) {
-                return false;
-            }
-
-            if (Math.abs(queen[row] - queen[i]) == Math.abs(row - i)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-
-//uncheck 하는 방법이 문제다. 이전 값들ㅇ
 }
