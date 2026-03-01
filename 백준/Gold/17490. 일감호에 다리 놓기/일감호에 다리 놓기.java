@@ -33,10 +33,8 @@ public class Main {
         connectWithRight[0] = false;
 
         st = new StringTokenizer(br.readLine());
-
-        List<Edge> edges = new ArrayList<>();
         for (int i = 1; i <= N; i++) {
-            edges.add(new Edge(0, i, Integer.parseInt(st.nextToken())));
+            cost[i] = Integer.parseInt(st.nextToken());
         }
 
         // i,j 이웃한 경우만 주어짐
@@ -64,32 +62,25 @@ public class Main {
         // 공사 구간이 한개가 넘는다면, 와우도를 사용해야하고, 총 N개의 연결이 필요하다.
 
         // 공사안된 부분만 미리 연결
-        for (int i = 1; i <= N - 1; i++) {
+        for (int i = 1; i <= N; i++) {
             if (connectWithRight[i]) {
-                if (union(i, i + 1)) {
-                    connectedCount++;
+                if (i == N) {
+                    if (union(N, 1)) connectedCount++;
+                } else {
+                    if (union(i, i + 1)) connectedCount++;
                 }
             }
         }
 
-        if (connectWithRight[N]) {
-            if (union(N, 1)) {
-                connectedCount++;
-            }
+        for (int i = 1; i <= N; i++) {
+            int pi = find(i);
+            cost[pi] = Math.min(cost[pi], cost[i]);
         }
 
         long total = 0;
-        Collections.sort(edges, Comparator.comparingLong((e) -> e.cost));
-
-        for (int i = 0; i < edges.size(); i++) {
-            Edge edge = edges.get(i);
-            if (union(edge.n1, edge.n2)) {
-                total += edge.cost;
-                connectedCount++;
-
-                if ((connectedCount == N) || (K < total)) {
-                    break;
-                }
+        for (int i = 0; i <= N; i++) {
+            if (find(i) == i) {
+                total += cost[i];
             }
         }
 
@@ -113,18 +104,6 @@ public class Main {
         if (parent[i] == i) return i;
         else return parent[i] = find(parent[i]);
     }
-
-    static class Edge {
-        int n1;
-        int n2;
-        long cost;
-
-        public Edge(int n1, int n2, long cost) {
-            this.n1 = n1;
-            this.n2 = n2;
-            this.cost = cost;
-        }
-    }
 }
 
 /**
@@ -135,6 +114,4 @@ public class Main {
  * - right boolean 배열을 만들어서 연결여부를 체크.
  * - 해당 배열에 기반해 parent 배열 갱신하여 미리 연결해두기
  * 3) 와우도에서 다른 강의동까지 간선을 크루스칼로 마저 연결 시도
-
- 깔끔하게 각 컴포넌트의 비용만 계산하는 방법으로 다시 풀기.
  */
