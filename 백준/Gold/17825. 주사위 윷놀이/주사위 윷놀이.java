@@ -9,7 +9,7 @@ public class Main {
     static int[] diceResults;
     static User[] users;
     static int max = 0;
-    static int endIdx = 0;
+    static Cell END = null;
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -18,8 +18,6 @@ public class Main {
         Cell now = start;
         Cell c25 = null;
 
-        // ^
-        // | 22,24에 2를 곱하자
         int idx = 1;
         for (int i = 2; i <= 42; i+=2) {
             now.nextRed = new Cell(idx++, i);
@@ -53,7 +51,8 @@ public class Main {
             }
         }
 
-        endIdx = idx - 1;
+        END = now;
+        END.val = 0;
 
         diceResults = new int[10];
         for (int i = 0; i < 10; i++) {
@@ -70,36 +69,40 @@ public class Main {
     }
 
     private static void backtracking(int depth, int total) {
-        max = Math.max(max, total);
+        if (depth == 10) {
+            max = Math.max(max, total);
+            return;
+        }
 
-        if (depth == 10) return;
+        boolean[] tried = new boolean[50];
 
         for (int i = 0; i < 4; i++) {
             if (users[i].isEnd()) continue;
+            int pos = users[i].now.idx;
+            if (tried[pos]) continue;
+            tried[pos] = true;
 
             Cell temp = users[i].now;
+            Cell dest = users[i].move(diceResults[depth]);
 
-            int count = diceResults[depth];
-            int score = users[i].move(count);
+            // 도착끼리는 충돌x
+            if (isConflict(i , dest)) continue;
 
-            if (!isConflict(i)) {
-                backtracking(depth + 1, total + score);
-            }
-
+            users[i].now = dest;
+            backtracking(depth + 1, total + dest.val);
             users[i].now = temp;
         }
     }
 
-    private static boolean isConflict(int idx) {
-        User user = users[idx];
-        if (user.isEnd()) return false;
+    private static boolean isConflict(int idx, Cell dest) {
+        if (dest == END) return false;
 
         for (int i = 0; i < 4; i++) {
             if (idx == i) continue;
             User another = users[i];
 
             if (another.isEnd()) continue;
-            if (user.now.idx == another.now.idx) return true;
+            if (dest == another.now) return true;
         }
 
         return false;
@@ -124,26 +127,27 @@ public class Main {
             this.now = now;
         }
 
-        public boolean isEnd() {
-            return now.idx == endIdx;
-        }
-
-        public int move(int count) {
+        public Cell move(int count) {
+            Cell next;
             if (now.nextBlue != null) {
-                now = now.nextBlue;
+                next = now.nextBlue;
             } else {
-                now = now.nextRed;
+                next = now.nextRed;
             }
             count--;
 
-            if (now.idx == endIdx) return 0;
+            if (next == END) return next;
 
             while (count-- > 0) {
-                now = now.nextRed;
-                if (now.idx == endIdx) return 0;
+                next = next.nextRed;
+                if (next == END) return next;
             }
 
-            return now.val;
+            return next;
+        }
+
+        public boolean isEnd() {
+            return now == END;
         }
     }
 }
